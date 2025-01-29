@@ -1,0 +1,10 @@
+(A) continue conversation with v0 from modo social media app to implement features and get everything working, specifically V8 of the modo app
+(A) right now the code here is v8 of the mojo app, try and get a firebase up and running and link it to see if it works
+(A) debug any next.js errors that popup and DONT GIVE UP, treat modo as a good learning experience to properly fully deploy a web app for the first time including database integration
+(A) beautify the frontend further and make it unique, minimalist and interesting
+(A) brainstorm some interesting features that modo should have aside from its interesting frontend
+(A) actually deploy modo and ensure it can be deployed on vercel and deploy the database on firebase properly, ensuring everything works at one go
+(A) get users on it and ask them to help me betatest as needed 
+(A) gather actual feedback from artists on what other features they would want to see
+(A) ensure the app properly works and be inspired by james scholz' current social media app doco
+(A) add more details to the README.md once everything is working and deployed
