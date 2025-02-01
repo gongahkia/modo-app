@@ -5,6 +5,16 @@
 (A) brainstorm some interesting features that modo should have aside from its interesting frontend
 (A) actually deploy modo and ensure it can be deployed on vercel and deploy the database on firebase properly, ensuring everything works at one go
 (A) get users on it and ask them to help me betatest as needed 
+
+(A) possible features ive just thought of
+(A) ability to upload different various image filetypes at various resolutions
+(A) ability to upload 3d models directly via the most common formats (gpt this to check what those formats are) that can then be rendered directly within the modo webapp and can be further rotated as desired
 (A) gather actual feedback from artists on what other features they would want to see
+(A) nichole: anti-ai features, perhaps a website or plugin that can detect any art that has been uploaded and appears to be made with AI
+(A) nichole: add a saved posts feature similar to instagram that locally saves the literal piece of art, call it the CLOSET or something similar
+(A) nichole: ability to save other people's posts as jpegs, jpg, webp, png and whatever other common formats are used
+(A) kevan: implement a hashtag system, implement a detailed art-specific hashtag system (ask GPT for common art themes like watercolor, bnw, clay etc) and allow people to easily find your posts 
+(A) kevan: if there is a way, implement a reccomendation system to recommend art based on the art that a user already saves and likes
+
 (A) ensure the app properly works and be inspired by james scholz' current social media app doco
 (A) add more details to the README.md once everything is working and deployed
