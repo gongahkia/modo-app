@@ -1,14 +1,14 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
-import { doc, updateDoc, arrayUnion } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useState, useRef } from "react"
+import { Button } from "@/components/ui/button"
 
 const emojis = ["😀", "😍", "🎨", "👍", "🔥", "💖", "🌟", "👏"]
 
 interface EmojiStickerProps {
   drawingId: string
+  imageWidth: number
+  imageHeight: number
 }
 
 interface Sticker {
@@ -17,61 +17,74 @@ interface Sticker {
   y: number
 }
 
-export default function EmojiSticker({ drawingId }: EmojiStickerProps) {
-  const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null)
+export default function EmojiSticker({ drawingId, imageWidth, imageHeight }: EmojiStickerProps) {
   const [stickers, setStickers] = useState<Sticker[]>([])
+  const [draggingEmoji, setDraggingEmoji] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleEmojiSelect = (emoji: string) => {
-    setSelectedEmoji(emoji)
+  const handleDragStart = (emoji: string, e: React.DragEvent) => {
+    setDraggingEmoji(emoji)
+    e.dataTransfer.setDragImage(new Image(), 0, 0) // Hide the default drag image
   }
 
-  const handleCanvasClick = async (e: React.MouseEvent<HTMLDivElement>) => {
-    if (selectedEmoji) {
-      const rect = e.currentTarget.getBoundingClientRect()
+  const handleDragEnd = (e: React.DragEvent) => {
+    if (containerRef.current && draggingEmoji) {
+      const rect = containerRef.current.getBoundingClientRect()
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
 
-      const newSticker = { emoji: selectedEmoji, x, y }
-      setStickers([...stickers, newSticker])
-      setSelectedEmoji(null)
-
-      try {
-        const drawingRef = doc(db, "drawings", drawingId)
-        await updateDoc(drawingRef, {
-          stickers: arrayUnion(newSticker),
-        })
-      } catch (error) {
-        console.error("Error adding sticker:", error)
+      if (x >= 0 && x <= imageWidth && y >= 0 && y <= imageHeight) {
+        setStickers([...stickers, { emoji: draggingEmoji, x, y }])
+        console.log(`Sticker added to drawing ${drawingId}:`, { emoji: draggingEmoji, x, y })
       }
     }
+    setDraggingEmoji(null)
   }
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full" onClick={handleCanvasClick}>
-      <div className="absolute top-4 left-4 bg-white bg-opacity-75 rounded p-2">
+    <div className="mb-4">
+      <div className="flex justify-center mb-2">
         {emojis.map((emoji) => (
-          <button
+          <Button
             key={emoji}
-            onClick={() => handleEmojiSelect(emoji)}
-            className={`text-2xl mx-1 ${selectedEmoji === emoji ? "border-2 border-blue-500" : ""}`}
+            variant="ghost"
+            size="sm"
+            draggable
+            onDragStart={(e) => handleDragStart(emoji, e)}
+            onDragEnd={handleDragEnd}
+            className="text-2xl mx-1 cursor-grab"
           >
             {emoji}
-          </button>
+          </Button>
         ))}
       </div>
-      {stickers.map((sticker, index) => (
-        <div
-          key={index}
-          style={{
-            position: "absolute",
-            left: `${sticker.x}px`,
-            top: `${sticker.y}px`,
-            fontSize: "24px",
-          }}
-        >
-          {sticker.emoji}
-        </div>
-      ))}
+      <div ref={containerRef} className="relative w-full h-[400px] border border-gray-300 overflow-hidden">
+        {stickers.map((sticker, index) => (
+          <div
+            key={index}
+            style={{
+              position: "absolute",
+              left: `${sticker.x}px`,
+              top: `${sticker.y}px`,
+              fontSize: "24px",
+            }}
+          >
+            {sticker.emoji}
+          </div>
+        ))}
+        {draggingEmoji && (
+          <div
+            style={{
+              position: "fixed",
+              left: "-1000px",
+              top: "-1000px",
+              fontSize: "24px",
+            }}
+          >
+            {draggingEmoji}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -1,17 +1,53 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type React } from "react"
 import { Upload } from "lucide-react"
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
-import { storage, db, auth } from "@/lib/firebase"
+import { Button } from "@/components/ui/button"
 
 interface UploadDrawingProps {
   onUpload: (newDrawing: any) => void
 }
 
+const MAX_IMAGE_SIZE = 1200 // Maximum width or height in pixels
+
 export default function UploadDrawing({ onUpload }: UploadDrawingProps) {
   const [isUploading, setIsUploading] = useState(false)
+
+  const scaleDownImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement("canvas")
+          let width = img.width
+          let height = img.height
+
+          if (width > height) {
+            if (width > MAX_IMAGE_SIZE) {
+              height *= MAX_IMAGE_SIZE / width
+              width = MAX_IMAGE_SIZE
+            }
+          } else {
+            if (height > MAX_IMAGE_SIZE) {
+              width *= MAX_IMAGE_SIZE / height
+              height = MAX_IMAGE_SIZE
+            }
+          }
+
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext("2d")
+          ctx?.drawImage(img, 0, 0, width, height)
+          resolve(canvas.toDataURL(file.type))
+        }
+        img.onerror = reject
+        img.src = e.target?.result as string
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -20,29 +56,12 @@ export default function UploadDrawing({ onUpload }: UploadDrawingProps) {
     setIsUploading(true)
 
     try {
-      const user = auth.currentUser
-      if (!user) {
-        throw new Error("User not authenticated")
-      }
-
-      // Upload file to Firebase Storage
-      const storageRef = ref(storage, `drawings/${user.uid}/${Date.now()}_${file.name}`)
-      await uploadBytes(storageRef, file)
-      const downloadURL = await getDownloadURL(storageRef)
-
-      // Add drawing data to Firestore
-      const drawingRef = await addDoc(collection(db, "drawings"), {
-        userId: user.uid,
-        imageUrl: downloadURL,
-        createdAt: serverTimestamp(),
-        stickers: [],
-      })
+      const scaledImageUrl = await scaleDownImage(file)
 
       const newDrawing = {
-        id: drawingRef.id,
-        imageUrl: downloadURL,
-        author: user.displayName || user.email,
-        createdAt: new Date(),
+        id: Date.now().toString(),
+        imageUrl: scaledImageUrl,
+        author: "Current User",
       }
 
       onUpload(newDrawing)
@@ -56,18 +75,22 @@ export default function UploadDrawing({ onUpload }: UploadDrawingProps) {
 
   return (
     <div>
-      <label htmlFor="upload-drawing" className="cursor-pointer">
-        <Upload size={24} />
-        <input
-          id="upload-drawing"
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-          disabled={isUploading}
-        />
+      <label htmlFor="upload-drawing">
+        <Button variant="ghost" size="icon" asChild>
+          <span>
+            <Upload size={24} />
+            <input
+              id="upload-drawing"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+              disabled={isUploading}
+            />
+          </span>
+        </Button>
       </label>
-      {isUploading && <span>Uploading...</span>}
+      {isUploading && <span className="ml-2">Uploading...</span>}
     </div>
   )
 }
