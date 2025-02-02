@@ -1,23 +1,27 @@
 x (A) continue conversation with v0 from modo social media app to implement features and get everything working, specifically V8 of the modo app
+x (A) add a landing page that users are brought to and can login from, make this the default page within ./src/modo/app/page.tsx
+x (A) add a terms of service and legal disclaimer page upon the app loading in
+
+(A) try and debug the broken modo build
+
+(A) upload new version of modo to v0 and ask it to work on it from there
 
 (A) continue conversation with v0 from modo social media app to debug the following features 
 
-(A) change the color of the comments section to be black so messages can be seen
 (A) fix the emoji code, now a sepearte box is being rendered and emojis can only be dragged there, i want images to be dragged onto the image itself
 (A) move the emoji bar beneath the image instead so the emoji bar is beneath teh image, the comments section is on the right of the image
 (A) pin the currently selected emoji to the cursor when its being dragged to the image, so clicking an emoji attaches it to the user's mouse and only when the user clicks again does it detach and land on the image
+(A) change the color of the comments section to be black so messages can be seen, ensure thsi can be debugged on both light and dark colorways
 (A) save this version of modo first
 
 (A) continue conversation with v0 from modo social media app to implement the following features
 
+(A) add code that specifies when more than a given specified number of images is on a page (make the default number 10), to skip to the next page
 (A) add logic that lets gifs be added and uploaded to, so that animated gifs can be shown
-(A) add a landing page that users are brought to and can login from, make this the default page within ./src/modo/app/page.tsx
 (A) add more emojis to the currently available list
 (A) consider allowing users to further customise what emojis they prefer having in the future
-(A) add a terms of service and legal disclaimer page upon the app loading in
 (A) tweak the TOS and legal disclaimer before deploying the app for real in the future
 (A) add efficient code and logic that ensures loaded in images cannot overlap
-(A) add code that specifies when more than a given specified number of images is on a page (make the default number 10), to skip to the next page
 (A) is anything under the ./src/modo/pages subdirectory actually useful, otherwise consider removing it
 (A) add a better thought out personal user profile page
 (A) actually add functionality for page scrolling so that scrolling the mouse results in the user flipping the page of the sketchbook on dashboard/page.tsx

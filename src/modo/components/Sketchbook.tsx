@@ -4,13 +4,20 @@ import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import EmojiSticker from "./EmojiSticker"
-import CommentSection from "./CommentSection"
+import { EmojiSticker } from "./EmojiSticker"
+import { CommentSection } from "./CommentSection"
+
+interface Sticker {
+  emoji: string
+  x: number
+  y: number
+}
 
 interface Drawing {
   id: string
   imageUrl: string
   author: string
+  stickers: Sticker[]
 }
 
 interface SketchbookProps {
@@ -19,10 +26,12 @@ interface SketchbookProps {
 
 const DRAWINGS_PER_PAGE = 6
 
-export default function Sketchbook({ drawings }: SketchbookProps) {
+export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
+  const [drawings, setDrawings] = useState<Drawing[]>(initialDrawings)
   const [currentPage, setCurrentPage] = useState(0)
   const [zoomedDrawing, setZoomedDrawing] = useState<Drawing | null>(null)
   const sketchbookRef = useRef<HTMLDivElement>(null)
+  const zoomedImageRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -46,6 +55,28 @@ export default function Sketchbook({ drawings }: SketchbookProps) {
       }
     }
   }, [currentPage, drawings.length, zoomedDrawing])
+
+  const handleAddSticker = (emoji: string, x: number, y: number) => {
+    if (zoomedDrawing && zoomedImageRef.current) {
+      const rect = zoomedImageRef.current.getBoundingClientRect()
+      const relativeX = (x / rect.width) * 100
+      const relativeY = (y / rect.height) * 100
+
+      setDrawings((prevDrawings) =>
+        prevDrawings.map((drawing) =>
+          drawing.id === zoomedDrawing.id
+            ? { ...drawing, stickers: [...drawing.stickers, { emoji, x: relativeX, y: relativeY }] }
+            : drawing,
+        ),
+      )
+
+      setZoomedDrawing((prevZoomed) =>
+        prevZoomed
+          ? { ...prevZoomed, stickers: [...prevZoomed.stickers, { emoji, x: relativeX, y: relativeY }] }
+          : null,
+      )
+    }
+  }
 
   if (drawings.length === 0) {
     return <div className="flex items-center justify-center h-full">No drawings found. Start by uploading one!</div>
@@ -85,20 +116,31 @@ export default function Sketchbook({ drawings }: SketchbookProps) {
       </div>
       {zoomedDrawing && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-lg max-w-4xl w-full max-h-[90vh] flex">
-            <div className="w-2/3 pr-4">
+          <div className="bg-white p-4 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
+            <div className="relative flex-grow" ref={zoomedImageRef}>
               <Image
                 src={zoomedDrawing.imageUrl || "/placeholder.svg"}
                 alt={`Drawing by ${zoomedDrawing.author}`}
-                width={800}
-                height={800}
-                className="object-contain w-full h-full"
+                layout="fill"
+                objectFit="contain"
               />
+              {zoomedDrawing.stickers.map((sticker, index) => (
+                <div
+                  key={index}
+                  style={{
+                    position: "absolute",
+                    left: `${sticker.x}%`,
+                    top: `${sticker.y}%`,
+                    transform: "translate(-50%, -50%)",
+                    fontSize: "24px",
+                  }}
+                >
+                  {sticker.emoji}
+                </div>
+              ))}
             </div>
-            <div className="w-1/3 flex flex-col">
-              <EmojiSticker drawingId={zoomedDrawing.id} imageWidth={800} imageHeight={800} />
-              <CommentSection drawingId={zoomedDrawing.id} />
-            </div>
+            <EmojiSticker drawingId={zoomedDrawing.id} onAddSticker={handleAddSticker} />
+            <CommentSection drawingId={zoomedDrawing.id} />
           </div>
           <Button
             variant="ghost"

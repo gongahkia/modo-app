@@ -2,16 +2,18 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import Link from "next/link"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
 
@@ -19,6 +21,8 @@ export default function RegisterPage() {
     e.preventDefault()
     if (password !== confirmPassword) {
       setError("Passwords do not match")
+    } else if (!agreedToTerms) {
+      setError("You must agree to the Terms of Service")
     } else {
       // In a real app, we would send this data to the backend
       console.log("Registered:", { username, password })
@@ -64,6 +68,22 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="terms"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I agree to the{" "}
+                  <Link href="/terms" className="text-blue-500 hover:underline">
+                    Terms of Service
+                  </Link>
+                </label>
               </div>
             </div>
             {error && <p className="text-red-500 mt-2">{error}</p>}
