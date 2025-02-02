@@ -17,12 +17,6 @@ interface Drawing {
 export default function Dashboard() {
   const [drawings, setDrawings] = useState<Drawing[]>([])
 
-/*************  ✨ Codeium Command ⭐  *************/
-  /**
-   * Add a new drawing to the top of the list of drawings
-   * @param {Drawing} newDrawing The new drawing to add
-   */
-/******  71ddd4ef-daa3-4f9a-9465-5cffd7c746e6  *******/
   const handleNewDrawing = (newDrawing: Drawing) => {
     setDrawings((prevDrawings) => [newDrawing, ...prevDrawings])
   }
