@@ -1,23 +1,38 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Archive } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-
-interface SavedPost {
-  id: string
-  title: string
-  author: string
-}
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { useSavedPosts } from "@/contexts/SavedPostsContext"
 
 export default function SavedPostsIcon() {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [savedPosts, setSavedPosts] = useState<SavedPost[]>([
-    { id: "1", title: "Amazing Sketch", author: "JohnDoe" },
-    { id: "2", title: "Beautiful Landscape", author: "JaneSmith" },
-    // In a real app, this would be fetched from a server
-  ])
+  const { savedPosts } = useSavedPosts()
+
+  const renderImage = (post: any) => {
+    if (post.isGif) {
+      return (
+        <img
+          src={post.imageUrl || "/placeholder.svg"}
+          alt={`Saved post by ${post.author}`}
+          className="rounded-md object-cover w-full h-[180px]"
+        />
+      )
+    } else {
+      return (
+        <Image
+          src={post.imageUrl || "/placeholder.svg"}
+          alt={`Saved post by ${post.author}`}
+          width={180}
+          height={180}
+          className="rounded-md object-cover w-full h-[180px]"
+        />
+      )
+    }
+  }
 
   return (
     <Popover open={isExpanded} onOpenChange={setIsExpanded}>
@@ -26,28 +41,29 @@ export default function SavedPostsIcon() {
           <Archive size={24} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80">
-        <div className="space-y-4">
-          <h3 className="font-semibold text-lg">Saved Posts</h3>
+      <PopoverContent className="w-[400px] p-0">
+        <div className="p-4 bg-background">
+          <h3 className="font-semibold text-lg mb-2">Saved Posts</h3>
           {savedPosts.length > 0 ? (
-            <ul className="space-y-2">
-              {savedPosts.map((post) => (
-                <li key={post.id} className="flex justify-between items-center">
-                  <span>
-                    {post.title} by {post.author}
-                  </span>
-                  <Button size="sm" variant="ghost">
-                    View
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <ScrollArea className="h-[400px] w-full">
+              <div className="grid grid-cols-2 gap-4">
+                {savedPosts.map((post) => (
+                  <div key={post.id} className="relative group">
+                    {renderImage(post)}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-200 flex items-end justify-center">
+                      <p className="text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        by {post.author}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
           ) : (
-            <p>No saved posts yet.</p>
+            <p className="text-center text-muted-foreground">No saved posts yet.</p>
           )}
         </div>
       </PopoverContent>
     </Popover>
   )
 }
-

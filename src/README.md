@@ -8,7 +8,7 @@ For testing purposes.
 
 ```console
 $ cd modo
-$ npm install next@latest react@latest react-dom@latest next-themes
+$ npm install @radix-ui/react-popover @radix-ui/react-dialog @radix-ui/react-label @radix-ui/react-scroll-area @radix-ui/react-switch lucide-react react-easy-crop
 $ npx shadcn@latest add button card input label switch tabs checkbox popover
 $ npm run dev
 ```

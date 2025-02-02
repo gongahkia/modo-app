@@ -6,7 +6,7 @@ export default function LandingPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
       <div className="text-center">
         <h1 className="text-6xl font-bold text-white mb-4">Modo</h1>
-        <p className="text-2xl text-white mb-8">The social media for the starving artist</p>
+        <p className="text-2xl text-white mb-8">Stop scrolling. Start creating.</p>
         <div className="space-x-4">
           <Button asChild>
             <Link href="/login">Login</Link>

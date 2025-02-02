@@ -1,11 +1,18 @@
 "use client"
 
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
-import { X } from "lucide-react"
+import { X, FileCheck, File } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { EmojiSticker } from "./EmojiSticker"
-import { CommentSection } from "./CommentSection"
+import { EmojiBar } from "./EmojiBar"
+import { CommentInput } from "./CommentInput"
+
+interface Drawing {
+  id: string
+  imageUrl: string
+  author: string
+  isGif?: boolean
+}
 
 interface Sticker {
   emoji: string
@@ -13,41 +20,43 @@ interface Sticker {
   y: number
 }
 
-interface Drawing {
-  id: string
-  imageUrl: string
-  author: string
-  stickers: Sticker[]
+interface Comment {
+  text: string
+  x: number
+  y: number
 }
 
 interface SketchbookProps {
   drawings: Drawing[]
+  savedPosts: Drawing[]
+  addSavedPost: (post: Drawing) => void
+  removeSavedPost: (id: string) => void
 }
 
 const DRAWINGS_PER_PAGE = 6
 
-export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
-  const [drawings, setDrawings] = useState<Drawing[]>(initialDrawings)
+export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeSavedPost }: SketchbookProps) {
   const [currentPage, setCurrentPage] = useState(0)
   const [zoomedDrawing, setZoomedDrawing] = useState<Drawing | null>(null)
+  const [stickers, setStickers] = useState<Sticker[]>([])
+  const [comments, setComments] = useState<Comment[]>([])
+  const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null)
+  const [isAddingComment, setIsAddingComment] = useState(false)
+  const [commentPosition, setCommentPosition] = useState<{ x: number; y: number } | null>(null)
   const sketchbookRef = useRef<HTMLDivElement>(null)
-  const zoomedImageRef = useRef<HTMLDivElement>(null)
+  const imageRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setDrawings(initialDrawings)
-  }, [initialDrawings])
-
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (!zoomedDrawing) {
-      if (e.deltaY > 0 && (currentPage + 1) * DRAWINGS_PER_PAGE < drawings.length) {
-        setCurrentPage((prev) => prev + 1)
-      } else if (e.deltaY < 0 && currentPage > 0) {
-        setCurrentPage((prev) => prev - 1)
+    const handleWheel = (e: WheelEvent) => {
+      if (!zoomedDrawing) {
+        if (e.deltaY > 0 && (currentPage + 1) * DRAWINGS_PER_PAGE < drawings.length) {
+          setCurrentPage((prev) => prev + 1)
+        } else if (e.deltaY < 0 && currentPage > 0) {
+          setCurrentPage((prev) => prev - 1)
+        }
       }
     }
-  }, [currentPage, drawings.length, zoomedDrawing])
 
-  useEffect(() => {
     const sketchbook = sketchbookRef.current
     if (sketchbook) {
       sketchbook.addEventListener("wheel", handleWheel)
@@ -58,29 +67,78 @@ export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
         sketchbook.removeEventListener("wheel", handleWheel)
       }
     }
-  }, [handleWheel])
+  }, [currentPage, drawings.length, zoomedDrawing])
 
-  const handleAddSticker = useCallback((emoji: string, x: number, y: number) => {
-    if (zoomedDrawing && zoomedImageRef.current) {
-      const rect = zoomedImageRef.current.getBoundingClientRect()
-      const relativeX = (x / rect.width) * 100
-      const relativeY = (y / rect.height) * 100
+  const handleEmojiSelect = (emoji: string) => {
+    setSelectedEmoji(emoji)
+    setIsAddingComment(false)
+  }
 
-      setDrawings((prevDrawings) =>
-        prevDrawings.map((drawing) =>
-          drawing.id === zoomedDrawing.id
-            ? { ...drawing, stickers: [...drawing.stickers, { emoji, x: relativeX, y: relativeY }] }
-            : drawing
-        )
+  const handleCommentSelect = () => {
+    setSelectedEmoji(null)
+    setIsAddingComment(true)
+  }
+
+  const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (imageRef.current) {
+      const rect = imageRef.current.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width) * 100
+      const y = ((e.clientY - rect.top) / rect.height) * 100
+
+      if (selectedEmoji) {
+        setStickers([...stickers, { emoji: selectedEmoji, x, y }])
+        setSelectedEmoji(null)
+      } else if (isAddingComment) {
+        setCommentPosition({ x, y })
+      }
+    }
+  }
+
+  const handleCommentSubmit = (text: string) => {
+    if (commentPosition) {
+      setComments([...comments, { text, x: commentPosition.x, y: commentPosition.y }])
+      setIsAddingComment(false)
+      setCommentPosition(null)
+    }
+  }
+
+  const handleCommentCancel = () => {
+    setIsAddingComment(false)
+    setCommentPosition(null)
+  }
+
+  const handleSavePost = (drawing: Drawing) => {
+    const isPostSaved = savedPosts.some((post) => post.id === drawing.id)
+    if (isPostSaved) {
+      removeSavedPost(drawing.id)
+    } else {
+      addSavedPost(drawing)
+    }
+  }
+
+  const renderImage = (drawing: Drawing, width: number, height: number) => {
+    if (drawing.isGif) {
+      return (
+        <img
+          src={drawing.imageUrl || "/placeholder.svg"}
+          alt={`Drawing by ${drawing.author}`}
+          width={width}
+          height={height}
+          className="object-cover shadow-md"
+        />
       )
-
-      setZoomedDrawing((prevZoomed) =>
-        prevZoomed
-          ? { ...prevZoomed, stickers: [...prevZoomed.stickers, { emoji, x: relativeX, y: relativeY }] }
-          : null
+    } else {
+      return (
+        <Image
+          src={drawing.imageUrl || "/placeholder.svg"}
+          alt={`Drawing by ${drawing.author}`}
+          width={width}
+          height={height}
+          className="object-cover shadow-md"
+        />
       )
     }
-  }, [zoomedDrawing])
+  }
 
   if (drawings.length === 0) {
     return <div className="flex items-center justify-center h-full">No drawings found. Start by uploading one!</div>
@@ -104,13 +162,7 @@ export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
             onClick={() => setZoomedDrawing(drawing)}
           >
             <div className="relative">
-              <Image
-                src={drawing.imageUrl || "/placeholder.svg"}
-                alt={`Drawing by ${drawing.author}`}
-                width={288}
-                height={288}
-                className="object-cover shadow-md"
-              />
+              {renderImage(drawing, 288, 288)}
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-1 text-xs">
                 By {drawing.author}
               </div>
@@ -121,36 +173,89 @@ export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
       {zoomedDrawing && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
-            <div className="relative flex-grow" ref={zoomedImageRef}>
-              <Image
-                src={zoomedDrawing.imageUrl || "/placeholder.svg"}
-                alt={`Drawing by ${zoomedDrawing.author}`}
-                layout="fill"
-                objectFit="contain"
-              />
-              {zoomedDrawing.stickers.map((sticker, index) => (
-                <div
-                  key={index}
-                  style={{
-                    position: "absolute",
-                    left: `${sticker.x}%`,
-                    top: `${sticker.y}%`,
-                    transform: "translate(-50%, -50%)",
-                    fontSize: "24px",
-                  }}
-                >
-                  {sticker.emoji}
-                </div>
-              ))}
+            <div className="relative flex-grow" style={{ width: "100%", height: "700px" }}>
+              <div ref={imageRef} className="relative cursor-crosshair w-full h-full" onClick={handleImageClick}>
+                {zoomedDrawing.isGif ? (
+                  <img
+                    src={zoomedDrawing.imageUrl || "/placeholder.svg"}
+                    alt={`Drawing by ${zoomedDrawing.author}`}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <Image
+                    src={zoomedDrawing.imageUrl || "/placeholder.svg"}
+                    alt={`Drawing by ${zoomedDrawing.author}`}
+                    layout="fill"
+                    objectFit="contain"
+                  />
+                )}
+                {stickers.map((sticker, index) => (
+                  <div
+                    key={`sticker-${index}`}
+                    style={{
+                      position: "absolute",
+                      left: `${sticker.x}%`,
+                      top: `${sticker.y}%`,
+                      transform: "translate(-50%, -50%)",
+                      fontSize: "24px",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {sticker.emoji}
+                  </div>
+                ))}
+                {comments.map((comment, index) => (
+                  <div
+                    key={`comment-${index}`}
+                    style={{
+                      position: "absolute",
+                      left: `${comment.x}%`,
+                      top: `${comment.y}%`,
+                      transform: "translate(-50%, -50%)",
+                      backgroundColor: "white",
+                      padding: "4px 8px",
+                      borderRadius: "12px",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                      maxWidth: "200px",
+                      wordWrap: "break-word",
+                    }}
+                  >
+                    {comment.text}
+                  </div>
+                ))}
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 bg-white bg-opacity-75 hover:bg-opacity-100"
+                onClick={() => handleSavePost(zoomedDrawing)}
+              >
+                {savedPosts.some((post) => post.id === zoomedDrawing.id) ? (
+                  <FileCheck className="h-6 w-6 text-green-500" />
+                ) : (
+                  <File className="h-6 w-6" />
+                )}
+              </Button>
             </div>
-            <EmojiSticker drawingId={zoomedDrawing.id} onAddSticker={handleAddSticker} />
-            <CommentSection drawingId={zoomedDrawing.id} />
+            <EmojiBar onEmojiSelect={handleEmojiSelect} onCommentSelect={handleCommentSelect} />
+            {isAddingComment && commentPosition && (
+              <div className="mt-4">
+                <CommentInput onSubmit={handleCommentSubmit} onCancel={handleCommentCancel} />
+              </div>
+            )}
           </div>
           <Button
             variant="ghost"
             size="icon"
             className="absolute top-4 right-4 text-white"
-            onClick={() => setZoomedDrawing(null)}
+            onClick={() => {
+              setZoomedDrawing(null)
+              setStickers([])
+              setComments([])
+              setSelectedEmoji(null)
+              setIsAddingComment(false)
+              setCommentPosition(null)
+            }}
           >
             <X size={24} />
           </Button>

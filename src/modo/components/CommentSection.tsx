@@ -15,7 +15,7 @@ interface CommentSectionProps {
   drawingId: string
 }
 
-export function CommentSection({ drawingId }: CommentSectionProps) {
+export default function CommentSection({ drawingId }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState("")
 

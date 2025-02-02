@@ -13,6 +13,39 @@ const MAX_IMAGE_SIZE = 1200 // Maximum width or height in pixels
 export default function UploadDrawing({ onUpload }: UploadDrawingProps) {
   const [isUploading, setIsUploading] = useState(false)
 
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+
+    try {
+      let imageUrl: string
+
+      if (file.type === "image/gif") {
+        // For GIFs, we don't resize to keep the animation
+        imageUrl = URL.createObjectURL(file)
+      } else {
+        // For other image types, we scale down if necessary
+        imageUrl = await scaleDownImage(file)
+      }
+
+      const newDrawing = {
+        id: Date.now().toString(),
+        imageUrl: imageUrl,
+        author: "Current User",
+        isGif: file.type === "image/gif",
+      }
+
+      onUpload(newDrawing)
+    } catch (error) {
+      console.error("Error uploading drawing:", error)
+      // Handle error (e.g., show error message to user)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const scaleDownImage = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -49,30 +82,6 @@ export default function UploadDrawing({ onUpload }: UploadDrawingProps) {
     })
   }
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    setIsUploading(true)
-
-    try {
-      const scaledImageUrl = await scaleDownImage(file)
-
-      const newDrawing = {
-        id: Date.now().toString(),
-        imageUrl: scaledImageUrl,
-        author: "Current User",
-      }
-
-      onUpload(newDrawing)
-    } catch (error) {
-      console.error("Error uploading drawing:", error)
-      // Handle error (e.g., show error message to user)
-    } finally {
-      setIsUploading(false)
-    }
-  }
-
   return (
     <div>
       <label htmlFor="upload-drawing">
@@ -82,7 +91,7 @@ export default function UploadDrawing({ onUpload }: UploadDrawingProps) {
             <input
               id="upload-drawing"
               type="file"
-              accept="image/*"
+              accept="image/*,image/gif"
               onChange={handleFileChange}
               className="hidden"
               disabled={isUploading}
