@@ -48,3 +48,4 @@ x (A) add logic that lets gifs be added and uploaded to, so that animated gifs c
 
 (A) ensure the app properly works and be inspired by james scholz' current social media app doco
 (A) add more details to the README.md once everything is working and deployed
+(A) after everything is done, post it on Linkedin, make a linkedin organisation for Modo, and add myself as an employee
