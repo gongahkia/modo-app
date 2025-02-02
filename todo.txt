@@ -2,7 +2,10 @@ x (A) continue conversation with v0 from modo social media app to implement feat
 x (A) add a landing page that users are brought to and can login from, make this the default page within ./src/modo/app/page.tsx
 x (A) add a terms of service and legal disclaimer page upon the app loading in
 
+(A) figure out what to npx install first to run modo locally
 (A) try and debug the broken modo build
+(A) figure out why styling isnt showing up nicely right now
+(A) consider removing all actual styling options for now if im unable to debug it
 
 (A) upload new version of modo to v0 and ask it to work on it from there
 

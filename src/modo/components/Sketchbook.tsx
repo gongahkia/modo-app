@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import Image from "next/image"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -34,16 +34,20 @@ export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
   const zoomedImageRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (!zoomedDrawing) {
-        if (e.deltaY > 0 && (currentPage + 1) * DRAWINGS_PER_PAGE < drawings.length) {
-          setCurrentPage((prev) => prev + 1)
-        } else if (e.deltaY < 0 && currentPage > 0) {
-          setCurrentPage((prev) => prev - 1)
-        }
+    setDrawings(initialDrawings)
+  }, [initialDrawings])
+
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (!zoomedDrawing) {
+      if (e.deltaY > 0 && (currentPage + 1) * DRAWINGS_PER_PAGE < drawings.length) {
+        setCurrentPage((prev) => prev + 1)
+      } else if (e.deltaY < 0 && currentPage > 0) {
+        setCurrentPage((prev) => prev - 1)
       }
     }
+  }, [currentPage, drawings.length, zoomedDrawing])
 
+  useEffect(() => {
     const sketchbook = sketchbookRef.current
     if (sketchbook) {
       sketchbook.addEventListener("wheel", handleWheel)
@@ -54,9 +58,9 @@ export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
         sketchbook.removeEventListener("wheel", handleWheel)
       }
     }
-  }, [currentPage, drawings.length, zoomedDrawing])
+  }, [handleWheel])
 
-  const handleAddSticker = (emoji: string, x: number, y: number) => {
+  const handleAddSticker = useCallback((emoji: string, x: number, y: number) => {
     if (zoomedDrawing && zoomedImageRef.current) {
       const rect = zoomedImageRef.current.getBoundingClientRect()
       const relativeX = (x / rect.width) * 100
@@ -66,17 +70,17 @@ export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
         prevDrawings.map((drawing) =>
           drawing.id === zoomedDrawing.id
             ? { ...drawing, stickers: [...drawing.stickers, { emoji, x: relativeX, y: relativeY }] }
-            : drawing,
-        ),
+            : drawing
+        )
       )
 
       setZoomedDrawing((prevZoomed) =>
         prevZoomed
           ? { ...prevZoomed, stickers: [...prevZoomed.stickers, { emoji, x: relativeX, y: relativeY }] }
-          : null,
+          : null
       )
     }
-  }
+  }, [zoomedDrawing])
 
   if (drawings.length === 0) {
     return <div className="flex items-center justify-center h-full">No drawings found. Start by uploading one!</div>
@@ -158,4 +162,3 @@ export function Sketchbook({ drawings: initialDrawings }: SketchbookProps) {
     </div>
   )
 }
-

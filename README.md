@@ -1,4 +1,4 @@
-> TODO add build tag here
+![](https://img.shields.io/badge/modo_1.0.0-alpha-orange)
 
 # `Modo` 🖌️
 
@@ -14,9 +14,7 @@ Social media web app for artists.
 
 ## Usage
 
-[`Modo`](https://github.com/gongahkia/modo) is ***now live*** at [https://modo.vercel.app/](https://modo.vercel.app/).
-
-> TODO add more details above.
+`Modo` is ***now live*** at [https://modo-live.vercel.app/](https://modo-live.vercel.app/).
 
 ## Support
 
@@ -24,11 +22,40 @@ Social media web app for artists.
 
 ## Architecture
 
-> TODO add more here
+> TODO add more and a diagram here showing all the microservices used
 
 ## Disclaimer
 
 > TODO add legal disclaimer here
+
+## License
+
+> TODO add license here similar to this one 
+
+## Beta Testers
+
+My thanks to the following people for their patience and feedback.
+
+<table>
+	<tbody>
+        <tr>
+            <td align="center">
+                <a href="https://www.linkedin.com/in/nicholebun/">
+                    <img src="https://avatars.githubusercontent.com/u/169415342?v=4" width="100;" alt="flowersought"/>
+                    <br />
+                    <sub><b>Nichole Bun</b></sub>
+                </a>
+            </td>
+            <td align="center">
+		<a href="https://github.com/a-stint">
+                    <img src="https://avatars.githubusercontent.com/u/149822619?v=4" width="100;" alt="flowersought"/>
+                    <br />
+                    <sub><b>Astin Tay</b></sub>
+                </a>
+            </td>
+        </tr>
+	<tbody>
+</table>
 
 ## Reference
 
