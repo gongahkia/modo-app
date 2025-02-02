@@ -15,7 +15,7 @@ x (A) save this version of modo first
 x (A) fix the squashed profile pictures
 x (A) add logic that lets gifs be added and uploaded to, so that animated gifs can be shown
 
-(A) continue conversation with v0 from modo social media app to implement the following features
+(A) continue conversation with v0 from modo social media app v42 to implement the following features
 
 (A) consider allowing users to further customise what emojis they prefer having in the future
 (A) tweak the TOS and legal disclaimer before deploying the app for real in the future

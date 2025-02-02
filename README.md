@@ -13,7 +13,7 @@ Social media web app for artists.
 
 ## Screenshots
 
-![](./asset/reference/modo-v1.0.0/launch.png)
+![](./asset/reference/modo-v1.1.0/launch.png)
 ![](./asset/reference/modo-v1.0.0/login.png)
 ![](./asset/reference/modo-v1.0.0/register.png)
 ![](./asset/reference/modo-v1.0.0/tos.png)
