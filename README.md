@@ -1,5 +1,8 @@
 ![](https://img.shields.io/badge/modo_1.0.0-alpha-orange)
 
+> [!NOTE]  
+> Still in development.  
+
 # `Modo` 🖌️
 
 Social media web app for artists.
@@ -10,7 +13,15 @@ Social media web app for artists.
 
 ## Screenshots
 
-> TODO add more here
+![](./asset/reference/modo-v1.0.0/launch.png)
+![](./asset/reference/modo-v1.0.0/login.png)
+![](./asset/reference/modo-v1.0.0/register.png)
+![](./asset/reference/modo-v1.0.0/tos.png)
+![](./asset/reference/modo-v1.0.0/dashboard.png)
+![](./asset/reference/modo-v1.0.0/zoom.png)
+![](./asset/reference/modo-v1.0.0/following.png)
+![](./asset/reference/modo-v1.0.0/saved.png)
+![](./asset/reference/modo-v1.0.0/profile.png)
 
 ## Usage
 
