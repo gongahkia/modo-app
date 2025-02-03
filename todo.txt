@@ -17,6 +17,7 @@ x (A) add logic that lets gifs be added and uploaded to, so that animated gifs c
 
 (A) continue conversation with v0 from modo social media app v42 to implement the following features
 
+(A) implement auth with clerk https://github.com/clerk/nextjs-auth-starter-template
 (A) consider allowing users to further customise what emojis they prefer having in the future
 (A) tweak the TOS and legal disclaimer before deploying the app for real in the future
 (A) add efficient code and logic that ensures loaded in images cannot overlap
