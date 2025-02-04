@@ -3,6 +3,7 @@ x (A) add a terms of service and legal disclaimer page upon the app loading in
 x (A) try and debug the broken modo build
 x (A) figure out why styling isnt showing up nicely right now
 x (A) consider removing all actual styling options for now if im unable to debug it
+x (A) kevan: if there is a way, implement a reccomendation system to recommend art based on the art that a user already saves and likes
 x (A) fix the emoji code, now a sepearte box is being rendered and emojis can only be dragged there, i want images to be dragged onto the image itself
 x (A) move the emoji bar beneath the image instead so the emoji bar is beneath teh image, the comments section is on the right of the image
 x (A) pin the currently selected emoji to the cursor when its being dragged to the image, so clicking an emoji attaches it to the user's mouse and only when the user clicks again does it detach and land on the image
@@ -14,39 +15,29 @@ x (A) figure out what to npx install first to run modo locally
 x (A) save this version of modo first
 x (A) fix the squashed profile pictures
 x (A) add logic that lets gifs be added and uploaded to, so that animated gifs can be shown
+x (A) consider allowing users to further customise what emojis they prefer having in the future
+x (A) tweak the TOS and legal disclaimer before deploying the app for real in the future
+x (A) add functionality so that when i clcik an image within saved posts, it brings up the same zoomed in view with the emoji panel as when i clcik an image from the dashboard directly
+x (A) now make it so that when users press and hold an image (in the dashbaord overview), they can freely change its position and an image is pinned to its new location when users let go
+x (A) actually add functionality for page scrolling so that scrolling the mouse results in the user flipping the page of the sketchbook on dashboard/page.tsx
+x (A) link all the frontend features to a proper backend
+x (A) deprecate the current version of modo and focus on getting the frontend features to be where i want them to be first, completely remove authentciation and just simulate logging in with a provided username and password
+x (A) after the frontend and all features are up, then add a backend with proper firebase data being sent and stored and actual authentication, but handle that later
+x (A) try and get a firebase up and running and link it to see if it works
+x (A) debug any next.js errors that popup and DONT GIVE UP, treat modo as a good learning experience to properly fully deploy a web app for the first time including database integration
+x (A) beautify the frontend further and make it unique, minimalist and interesting
+x (A) brainstorm some interesting features that modo should have aside from its interesting frontend
+x (A) actually deploy modo and ensure it can be deployed on vercel and deploy the database on firebase properly, ensuring everything works at one go
+x (A) get users on it and ask them to help me betatest as needed 
+x x(A) ensure the app properly works and be inspired by james scholz' current social media app docxo
+x (A) add more details to the README.md once everything is working and deployed
+x (A) after everything is done, post it on Linkedin, make a linkedin organisation for Modo, and add myself as an employee
+x (A) gather actual feedback from artists on what other features they would want to see
+x (A) anti-ai features, perhaps a website or plugin that can detect any art that has been uploaded and appears to be made with AI
+x (A) add a saved posts feature similar to instagram that locally saves the literal piece of art, call it the CLOSET or something similar
+x (A) nichole: ability to save other people's posts as jpegs, jpg, webp, png and whatever other common formats are used
+x (A) kevan: implement a hashtag system, implement a detailed art-specific hashtag system (ask GPT for common art themes like watercolor, bnw, clay etc) and allow people to easily find your posts 
 
 (A) continue conversation with v0 from modo social media app v42 to implement the following features
-
-(A) implement auth with clerk https://github.com/clerk/nextjs-auth-starter-template
-(A) consider allowing users to further customise what emojis they prefer having in the future
-(A) tweak the TOS and legal disclaimer before deploying the app for real in the future
-(A) add efficient code and logic that ensures loaded in images cannot overlap
 (A) is anything under the ./src/modo/pages subdirectory actually useful, otherwise consider removing it
-(A) add a better thought out personal user profile page
-(A) actually add functionality for page scrolling so that scrolling the mouse results in the user flipping the page of the sketchbook on dashboard/page.tsx
-(A) now make it so that when users press and hold an image (in the dashbaord overview), they can freely change its position and an image is pinned to its new location when users let go
-(A) add functionality so that when i clcik an image within saved posts, it brings up the same zoomed in view with the emoji panel as when i clcik an image from the dashboard directly
-
-(A) link all the frontend features to a proper backend
-(A) deprecate the current version of modo and focus on getting the frontend features to be where i want them to be first, completely remove authentciation and just simulate logging in with a provided username and password
-(A) after the frontend and all features are up, then add a backend with proper firebase data being sent and stored and actual authentication, but handle that later
-(A) try and get a firebase up and running and link it to see if it works
-(A) debug any next.js errors that popup and DONT GIVE UP, treat modo as a good learning experience to properly fully deploy a web app for the first time including database integration
-(A) beautify the frontend further and make it unique, minimalist and interesting
-(A) brainstorm some interesting features that modo should have aside from its interesting frontend
-(A) actually deploy modo and ensure it can be deployed on vercel and deploy the database on firebase properly, ensuring everything works at one go
-(A) get users on it and ask them to help me betatest as needed 
-
-(A) possible features ive just thought of
-(A) ability to upload different various image filetypes at various resolutions
-(A) ability to upload 3d models directly via the most common formats (gpt this to check what those formats are) that can then be rendered directly within the modo webapp and can be further rotated as desired
-(A) gather actual feedback from artists on what other features they would want to see
-(A) nichole: anti-ai features, perhaps a website or plugin that can detect any art that has been uploaded and appears to be made with AI
-(A) nichole: add a saved posts feature similar to instagram that locally saves the literal piece of art, call it the CLOSET or something similar
-(A) nichole: ability to save other people's posts as jpegs, jpg, webp, png and whatever other common formats are used
-(A) kevan: implement a hashtag system, implement a detailed art-specific hashtag system (ask GPT for common art themes like watercolor, bnw, clay etc) and allow people to easily find your posts 
-(A) kevan: if there is a way, implement a reccomendation system to recommend art based on the art that a user already saves and likes
-
-(A) ensure the app properly works and be inspired by james scholz' current social media app doco
-(A) add more details to the README.md once everything is working and deployed
-(A) after everything is done, post it on Linkedin, make a linkedin organisation for Modo, and add myself as an employee
+(A) refer to the issues tab directly from here on out 
