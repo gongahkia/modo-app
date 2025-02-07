@@ -33,7 +33,23 @@ Social media web app for artists.
 
 ## Architecture
 
-> TODO add more and a diagram here showing all the microservices used
+```mermaid
+sequenceDiagram
+    participant User
+    participant ModoApp
+    participant Clerk
+    participant FastAPI
+    participant Supabase
+
+    User->>ModoApp: Interacts with app
+    ModoApp->>Clerk: Authenticate user
+    Clerk-->>ModoApp: Return authentication token
+    ModoApp->>FastAPI: Make authenticated API request
+    FastAPI->>Supabase: Query or modify data
+    Supabase-->>FastAPI: Return data
+    FastAPI-->>ModoApp: Return API response
+    ModoApp-->>User: Display result
+```
 
 ## Disclaimer
 
