@@ -26,9 +26,9 @@ $ npm run dev
 1. Place the project password, supabase URL and supabase key into a local .env file.
 
 ```env
-PROJECT_PASSWORD=
-SUPABASE_URL=
-SUPABASE_KEY=
+PROJECT_PASSWORD=XXX
+SUPABASE_URL=XXX
+SUPABASE_KEY=XXX
 ```
 
 2. Run the following.
