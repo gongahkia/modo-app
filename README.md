@@ -1,11 +1,10 @@
 ![](https://img.shields.io/badge/modo_1.0.0-alpha-orange)
 
-> [!NOTE]  
-> Still in development.  
-
 # `Modo` 🖌️
 
-Social media web app for artists.
+Social media for artists.
+
+Currently served as a web app at [https://modo-live.vercel.app/](https://modo-live.vercel.app/).
 
 ## Rationale
 
@@ -13,19 +12,7 @@ Social media web app for artists.
 
 ## Screenshots
 
-![](./asset/reference/modo-v1.1.0/launch.png)
-![](./asset/reference/modo-v1.0.0/login.png)
-![](./asset/reference/modo-v1.0.0/register.png)
-![](./asset/reference/modo-v1.0.0/tos.png)
-![](./asset/reference/modo-v1.0.0/dashboard.png)
-![](./asset/reference/modo-v1.0.0/zoom.png)
-![](./asset/reference/modo-v1.0.0/following.png)
-![](./asset/reference/modo-v1.0.0/saved.png)
-![](./asset/reference/modo-v1.0.0/profile.png)
-
-## Usage
-
-`Modo` is ***now live*** at [https://modo-live.vercel.app/](https://modo-live.vercel.app/).
+> TODO add more here
 
 ## Support
 
@@ -57,11 +44,13 @@ sequenceDiagram
 
 ## License
 
-> TODO add license here similar to this one 
+> TODO add license here similar to the one Zeming posted in his repo
 
 ## Beta Testers
 
 My thanks to the following people for their patience and feedback.
+
+> TODO add here instead of these placeholders
 
 <table>
 	<tbody>
