@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Users, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,20 +17,48 @@ export default function FollowingIcon() {
   const [searchResults, setSearchResults] = useState<User[]>([])
   const [followedUsers, setFollowedUsers] = useState<User[]>([])
 
-  const handleSearch = () => {
-    // In a real app, this would be an API call
-    const mockResults: User[] = [
-      { id: "1", username: "user1", userCode: "123456" },
-      { id: "2", username: "user2", userCode: "234567" },
-    ]
-    setSearchResults(mockResults)
+  useEffect(() => {
+    fetchFollowedUsers()
+  }, [])
+
+  const fetchFollowedUsers = async () => {
+    try {
+      const response = await fetch("/api/users/following")
+      if (response.ok) {
+        const data = await response.json()
+        setFollowedUsers(data)
+      }
+    } catch (error) {
+      console.error("Error fetching followed users:", error)
+    }
   }
 
-  const handleFollowToggle = (user: User) => {
-    if (followedUsers.some((u) => u.id === user.id)) {
-      setFollowedUsers(followedUsers.filter((u) => u.id !== user.id))
-    } else {
-      setFollowedUsers([...followedUsers, user])
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(`/api/users/search/${searchQuery}`)
+      if (response.ok) {
+        const data = await response.json()
+        setSearchResults(data)
+      }
+    } catch (error) {
+      console.error("Error searching users:", error)
+    }
+  }
+
+  const handleFollowToggle = async (user: User) => {
+    try {
+      const isFollowing = followedUsers.some((u) => u.id === user.id)
+      const endpoint = isFollowing ? `/api/users/unfollow/${user.id}` : `/api/users/follow/${user.id}`
+      const response = await fetch(endpoint, { method: "POST" })
+      if (response.ok) {
+        if (isFollowing) {
+          setFollowedUsers(followedUsers.filter((u) => u.id !== user.id))
+        } else {
+          setFollowedUsers([...followedUsers, user])
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling follow:", error)
     }
   }
 

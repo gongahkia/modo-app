@@ -27,15 +27,14 @@ interface Comment {
 }
 
 interface SketchbookProps {
-  drawings: Drawing[]
   savedPosts: Drawing[]
-  addSavedPost: (post: Drawing) => void
-  removeSavedPost: (id: string) => void
+  addSavedPost: (post: Drawing) => Promise<void>
+  removeSavedPost: (id: string) => Promise<void>
 }
 
 const DRAWINGS_PER_PAGE = 6
 
-export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeSavedPost }: SketchbookProps) {
+export default function Sketchbook({ savedPosts, addSavedPost, removeSavedPost }: SketchbookProps) {
   const [currentPage, setCurrentPage] = useState(0)
   const [zoomedDrawing, setZoomedDrawing] = useState<Drawing | null>(null)
   const [stickers, setStickers] = useState<Sticker[]>([])
@@ -45,6 +44,7 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
   const [commentPosition, setCommentPosition] = useState<{ x: number; y: number } | null>(null)
   const sketchbookRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
+  const [drawings, setDrawings] = useState<Drawing[]>([])
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -68,6 +68,22 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
       }
     }
   }, [currentPage, drawings.length, zoomedDrawing])
+
+  useEffect(() => {
+    fetchDrawings()
+  }, [])
+
+  const fetchDrawings = async () => {
+    try {
+      const response = await fetch("/api/drawings")
+      if (response.ok) {
+        const data = await response.json()
+        setDrawings(data)
+      }
+    } catch (error) {
+      console.error("Error fetching drawings:", error)
+    }
+  }
 
   const handleEmojiSelect = (emoji: string) => {
     setSelectedEmoji(emoji)
@@ -107,12 +123,12 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
     setCommentPosition(null)
   }
 
-  const handleSavePost = (drawing: Drawing) => {
+  const handleSavePost = async (drawing: Drawing) => {
     const isPostSaved = savedPosts.some((post) => post.id === drawing.id)
     if (isPostSaved) {
-      removeSavedPost(drawing.id)
+      await removeSavedPost(drawing.id)
     } else {
-      addSavedPost(drawing)
+      await addSavedPost(drawing)
     }
   }
 

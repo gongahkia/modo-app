@@ -1,6 +1,4 @@
-"use client";
-
-import { createContext, useState, useContext, type ReactNode } from "react"
+import { createContext, useState, useContext, useEffect, type ReactNode } from "react"
 
 interface SavedPost {
   id: string
@@ -11,8 +9,8 @@ interface SavedPost {
 
 interface SavedPostsContextType {
   savedPosts: SavedPost[]
-  addSavedPost: (post: SavedPost) => void
-  removeSavedPost: (id: string) => void
+  addSavedPost: (post: SavedPost) => Promise<void>
+  removeSavedPost: (id: string) => Promise<void>
 }
 
 const SavedPostsContext = createContext<SavedPostsContextType | undefined>(undefined)
@@ -20,17 +18,51 @@ const SavedPostsContext = createContext<SavedPostsContextType | undefined>(undef
 export function SavedPostsProvider({ children }: { children: ReactNode }) {
   const [savedPosts, setSavedPosts] = useState<SavedPost[]>([])
 
-  const addSavedPost = (post: SavedPost) => {
-    setSavedPosts((prevPosts) => {
-      if (!prevPosts.some((p) => p.id === post.id)) {
-        return [...prevPosts, post]
+  useEffect(() => {
+    fetchSavedPosts()
+  }, [])
+
+  const fetchSavedPosts = async () => {
+    try {
+      const response = await fetch("/api/saved_posts")
+      if (response.ok) {
+        const data = await response.json()
+        setSavedPosts(data)
       }
-      return prevPosts
-    })
+    } catch (error) {
+      console.error("Error fetching saved posts:", error)
+    }
   }
 
-  const removeSavedPost = (id: string) => {
-    setSavedPosts((prevPosts) => prevPosts.filter((post) => post.id !== id))
+  const addSavedPost = async (post: SavedPost) => {
+    try {
+      const response = await fetch("/api/saved_posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(post),
+      })
+      if (response.ok) {
+        const newPost = await response.json()
+        setSavedPosts((prevPosts) => [...prevPosts, newPost])
+      }
+    } catch (error) {
+      console.error("Error adding saved post:", error)
+    }
+  }
+
+  const removeSavedPost = async (id: string) => {
+    try {
+      const response = await fetch(`/api/saved_posts/${id}`, {
+        method: "DELETE",
+      })
+      if (response.ok) {
+        setSavedPosts((prevPosts) => prevPosts.filter((post) => post.id !== id))
+      }
+    } catch (error) {
+      console.error("Error removing saved post:", error)
+    }
   }
 
   return (
