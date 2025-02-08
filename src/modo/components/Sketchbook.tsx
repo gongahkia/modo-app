@@ -6,6 +6,7 @@ import { X, FileCheck, File } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { EmojiBar } from "./EmojiBar"
 import { CommentInput } from "./CommentInput"
+import { getPosts, savePost, unsavePost, createInteraction, getPostInteractions } from "@/lib/api"
 
 interface Drawing {
   id: string
@@ -27,14 +28,15 @@ interface Comment {
 }
 
 interface SketchbookProps {
+  drawings: Drawing[]
   savedPosts: Drawing[]
-  addSavedPost: (post: Drawing) => Promise<void>
-  removeSavedPost: (id: string) => Promise<void>
+  addSavedPost: (post: Drawing) => void
+  removeSavedPost: (id: string) => void
 }
 
 const DRAWINGS_PER_PAGE = 6
 
-export default function Sketchbook({ savedPosts, addSavedPost, removeSavedPost }: SketchbookProps) {
+export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeSavedPost }: SketchbookProps) {
   const [currentPage, setCurrentPage] = useState(0)
   const [zoomedDrawing, setZoomedDrawing] = useState<Drawing | null>(null)
   const [stickers, setStickers] = useState<Sticker[]>([])
@@ -44,7 +46,19 @@ export default function Sketchbook({ savedPosts, addSavedPost, removeSavedPost }
   const [commentPosition, setCommentPosition] = useState<{ x: number; y: number } | null>(null)
   const sketchbookRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
-  const [drawings, setDrawings] = useState<Drawing[]>([])
+  const [drawingData, setDrawings] = useState<Drawing[]>([])
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await getPosts()
+        setDrawings(response.data)
+      } catch (error) {
+        console.error("Error fetching posts:", error)
+      }
+    }
+    fetchPosts()
+  }, [])
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -69,22 +83,6 @@ export default function Sketchbook({ savedPosts, addSavedPost, removeSavedPost }
     }
   }, [currentPage, drawings.length, zoomedDrawing])
 
-  useEffect(() => {
-    fetchDrawings()
-  }, [])
-
-  const fetchDrawings = async () => {
-    try {
-      const response = await fetch("/api/drawings")
-      if (response.ok) {
-        const data = await response.json()
-        setDrawings(data)
-      }
-    } catch (error) {
-      console.error("Error fetching drawings:", error)
-    }
-  }
-
   const handleEmojiSelect = (emoji: string) => {
     setSelectedEmoji(emoji)
     setIsAddingComment(false)
@@ -95,26 +93,46 @@ export default function Sketchbook({ savedPosts, addSavedPost, removeSavedPost }
     setIsAddingComment(true)
   }
 
-  const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleImageClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     if (imageRef.current) {
       const rect = imageRef.current.getBoundingClientRect()
       const x = ((e.clientX - rect.left) / rect.width) * 100
       const y = ((e.clientY - rect.top) / rect.height) * 100
 
       if (selectedEmoji) {
-        setStickers([...stickers, { emoji: selectedEmoji, x, y }])
-        setSelectedEmoji(null)
+        try {
+          await createInteraction({
+            post_id: zoomedDrawing?.id,
+            x_coordinate: Math.round(x),
+            y_coordinate: Math.round(y),
+            emoji: selectedEmoji,
+          })
+          setStickers([...stickers, { emoji: selectedEmoji, x, y }])
+          setSelectedEmoji(null)
+        } catch (error) {
+          console.error("Error creating emoji interaction:", error)
+        }
       } else if (isAddingComment) {
         setCommentPosition({ x, y })
       }
     }
   }
 
-  const handleCommentSubmit = (text: string) => {
-    if (commentPosition) {
-      setComments([...comments, { text, x: commentPosition.x, y: commentPosition.y }])
-      setIsAddingComment(false)
-      setCommentPosition(null)
+  const handleCommentSubmit = async (text: string) => {
+    if (commentPosition && zoomedDrawing) {
+      try {
+        await createInteraction({
+          post_id: zoomedDrawing.id,
+          x_coordinate: Math.round(commentPosition.x),
+          y_coordinate: Math.round(commentPosition.y),
+          comment: text,
+        })
+        setComments([...comments, { text, x: commentPosition.x, y: commentPosition.y }])
+        setIsAddingComment(false)
+        setCommentPosition(null)
+      } catch (error) {
+        console.error("Error creating comment interaction:", error)
+      }
     }
   }
 
@@ -125,10 +143,41 @@ export default function Sketchbook({ savedPosts, addSavedPost, removeSavedPost }
 
   const handleSavePost = async (drawing: Drawing) => {
     const isPostSaved = savedPosts.some((post) => post.id === drawing.id)
-    if (isPostSaved) {
-      await removeSavedPost(drawing.id)
-    } else {
-      await addSavedPost(drawing)
+    try {
+      if (isPostSaved) {
+        await unsavePost(drawing.id)
+        removeSavedPost(drawing.id)
+      } else {
+        await savePost(drawing.id)
+        addSavedPost(drawing)
+      }
+    } catch (error) {
+      console.error("Error saving/unsaving post:", error)
+    }
+  }
+
+  const fetchInteractions = async (drawingId: string) => {
+    try {
+      const response = await getPostInteractions(drawingId)
+      const fetchedInteractions = response.data
+      const newStickers = fetchedInteractions
+        .filter((interaction: any) => interaction.emoji)
+        .map((interaction: any) => ({
+          emoji: interaction.emoji,
+          x: interaction.x_coordinate,
+          y: interaction.y_coordinate,
+        }))
+      const newComments = fetchedInteractions
+        .filter((interaction: any) => interaction.comment)
+        .map((interaction: any) => ({
+          text: interaction.comment,
+          x: interaction.x_coordinate,
+          y: interaction.y_coordinate,
+        }))
+      setStickers(newStickers)
+      setComments(newComments)
+    } catch (error) {
+      console.error("Error fetching interactions:", error)
     }
   }
 
@@ -175,7 +224,10 @@ export default function Sketchbook({ savedPosts, addSavedPost, removeSavedPost }
               transform: `rotate(${Math.random() * 20 - 10}deg)`,
               zIndex: index,
             }}
-            onClick={() => setZoomedDrawing(drawing)}
+            onClick={() => {
+              setZoomedDrawing(drawing)
+              fetchInteractions(drawing.id)
+            }}
           >
             <div className="relative">
               {renderImage(drawing, 288, 288)}

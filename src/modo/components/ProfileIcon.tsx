@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import Cropper from "react-easy-crop"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { blacklistProfile, removeFromBlacklist } from "@/lib/api"
 
 interface CropArea {
   x: number
@@ -72,19 +73,25 @@ export default function ProfileIcon() {
     console.log("Visibility changed:", !visibility)
   }
 
-  const handleBlockUser = () => {
-    if (newBlockedUser && !blockedUsers.includes(newBlockedUser)) {
-      setBlockedUsers([...blockedUsers, newBlockedUser])
-      setNewBlockedUser("")
-      // In a real app, we would send this to a server
-      console.log("User blocked:", newBlockedUser)
+  const handleBlockUser = async () => {
+    if (newBlockedUser) {
+      try {
+        await blacklistProfile(newBlockedUser)
+        setBlockedUsers([...blockedUsers, newBlockedUser])
+        setNewBlockedUser("")
+      } catch (error) {
+        console.error("Error blocking user:", error)
+      }
     }
   }
 
-  const handleUnblockUser = (user: string) => {
-    setBlockedUsers(blockedUsers.filter((u) => u !== user))
-    // In a real app, we would send this to a server
-    console.log("User unblocked:", user)
+  const handleUnblockUser = async (user: string) => {
+    try {
+      await removeFromBlacklist(user)
+      setBlockedUsers(blockedUsers.filter((u) => u !== user))
+    } catch (error) {
+      console.error("Error unblocking user:", error)
+    }
   }
 
   return (
