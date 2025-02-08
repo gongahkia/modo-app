@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Users, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { searchProfiles, getFollowing, followProfile, unfollowProfile } from "@/lib/api"
 
 interface User {
   id: string
@@ -17,50 +18,40 @@ export default function FollowingIcon() {
   const [searchResults, setSearchResults] = useState<User[]>([])
   const [followedUsers, setFollowedUsers] = useState<User[]>([])
 
-  useEffect(() => {
-    fetchFollowedUsers()
-  }, [])
-
-  const fetchFollowedUsers = async () => {
-    try {
-      const response = await fetch("/api/users/following")
-      if (response.ok) {
-        const data = await response.json()
-        setFollowedUsers(data)
-      }
-    } catch (error) {
-      console.error("Error fetching followed users:", error)
-    }
-  }
-
   const handleSearch = async () => {
     try {
-      const response = await fetch(`/api/users/search/${searchQuery}`)
-      if (response.ok) {
-        const data = await response.json()
-        setSearchResults(data)
-      }
+      const response = await searchProfiles(searchQuery)
+      setSearchResults(response.data)
     } catch (error) {
-      console.error("Error searching users:", error)
+      console.error("Error searching profiles:", error)
     }
   }
 
   const handleFollowToggle = async (user: User) => {
     try {
-      const isFollowing = followedUsers.some((u) => u.id === user.id)
-      const endpoint = isFollowing ? `/api/users/unfollow/${user.id}` : `/api/users/follow/${user.id}`
-      const response = await fetch(endpoint, { method: "POST" })
-      if (response.ok) {
-        if (isFollowing) {
-          setFollowedUsers(followedUsers.filter((u) => u.id !== user.id))
-        } else {
-          setFollowedUsers([...followedUsers, user])
-        }
+      if (followedUsers.some((u) => u.id === user.id)) {
+        await unfollowProfile(user.id)
+        setFollowedUsers(followedUsers.filter((u) => u.id !== user.id))
+      } else {
+        await followProfile(user.id)
+        setFollowedUsers([...followedUsers, user])
       }
     } catch (error) {
       console.error("Error toggling follow:", error)
     }
   }
+
+  useEffect(() => {
+    const fetchFollowedUsers = async () => {
+      try {
+        const response = await getFollowing()
+        setFollowedUsers(response.data)
+      } catch (error) {
+        console.error("Error fetching followed users:", error)
+      }
+    }
+    fetchFollowedUsers()
+  }, [])
 
   return (
     <div className="relative">

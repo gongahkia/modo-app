@@ -1,16 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Archive } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useSavedPosts } from "@/contexts/SavedPostsContext"
+import { getSavedPosts } from "@/lib/api"
 
 export default function SavedPostsIcon() {
   const [isExpanded, setIsExpanded] = useState(false)
-  const { savedPosts } = useSavedPosts()
+  const [savedPosts, setSavedPosts] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchSavedPosts = async () => {
+      try {
+        const response = await getSavedPosts()
+        setSavedPosts(response.data)
+      } catch (error) {
+        console.error("Error fetching saved posts:", error)
+      }
+    }
+    fetchSavedPosts()
+  }, [])
 
   const renderImage = (post: any) => {
     if (post.isGif) {
