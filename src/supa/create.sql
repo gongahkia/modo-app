@@ -1,5 +1,5 @@
 -- Create enum types
-CREATE TYPE emoji_type AS ENUM ("😀", "😍", "🎨", "👍", "🔥", "💖", "🌟", "👏", "💬");
+CREATE TYPE emoji_type AS ENUM ('😀', '😍', '🎨', '👍', '🔥', '💖', '🌟', '👏', '💬');
 
 -- Create profiles table
 CREATE TABLE profiles (
