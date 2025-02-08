@@ -5,8 +5,8 @@
 | Name | Purpose |
 | :--- | :--- |
 | [`modo`](./modo/) | Next.js Frontend, to be hosted on Vercel *(React, Tailwind CSS and Next.js)* |
-| [`back/main.py`](./back/) | FastAPI Backend, to be hosted on AWS |
-| [`back/db.py`](./back/) | Database connection code, to hosted on Supabase |
+| [`back`](./back/) | FastAPI Backend, to be hosted on AWS |
+| [`supa`](./supa/) | Database, to be hosted on Supabase |
 
 ## Local deployment
 
