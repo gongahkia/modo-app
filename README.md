@@ -2,7 +2,11 @@
 
 # `Modo` 🖌️
 
-Social media for artists.
+<p align="center">
+<img src="./asset/logo/modo-no-background.png" width=40% height=40%>
+</p>
+
+Modo is a social media app for artists.
 
 Currently served as a web app at [https://modo-live.vercel.app/](https://modo-live.vercel.app/).
 
