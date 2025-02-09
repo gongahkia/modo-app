@@ -3,7 +3,7 @@
 # `Modo` 🖌️
 
 <p align="center">
-<img src="./asset/logo/modo-no-background.png" width=40% height=40%>
+<img src="./asset/logo/modo-no-background.png" width=50% height=50%>
 </p>
 
 Modo is a social media app for artists.
