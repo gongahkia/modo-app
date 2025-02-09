@@ -54,28 +54,7 @@ sequenceDiagram
 
 My thanks to the following people for their patience and feedback.
 
-> TODO add here instead of these placeholders
-
-<table>
-	<tbody>
-        <tr>
-            <td align="center">
-                <a href="https://www.linkedin.com/in/nicholebun/">
-                    <img src="https://avatars.githubusercontent.com/u/169415342?v=4" width="100;" alt="flowersought"/>
-                    <br />
-                    <sub><b>Nichole Bun</b></sub>
-                </a>
-            </td>
-            <td align="center">
-		<a href="https://github.com/a-stint">
-                    <img src="https://avatars.githubusercontent.com/u/149822619?v=4" width="100;" alt="flowersought"/>
-                    <br />
-                    <sub><b>Astin Tay</b></sub>
-                </a>
-            </td>
-        </tr>
-	<tbody>
-</table>
+> TODO add here 
 
 ## Reference
 
