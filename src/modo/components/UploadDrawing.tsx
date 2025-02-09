@@ -5,7 +5,7 @@ import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface UploadDrawingProps {
-  onUpload: () => void
+  onUpload: (newDrawing: any) => void
 }
 
 const MAX_IMAGE_SIZE = 1200 // Maximum width or height in pixels
@@ -31,26 +31,16 @@ export default function UploadDrawing({ onUpload }: UploadDrawingProps) {
       }
 
       const newDrawing = {
+        id: Date.now().toString(),
         imageUrl: imageUrl,
-        author: "Current User", // You might want to replace this with the actual user's name
+        author: "Current User",
         isGif: file.type === "image/gif",
       }
 
-      const response = await fetch("/api/drawings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newDrawing),
-      })
-
-      if (response.ok) {
-        onUpload()
-      } else {
-        console.error("Error uploading drawing")
-      }
+      onUpload(newDrawing)
     } catch (error) {
       console.error("Error uploading drawing:", error)
+      // Handle error (e.g., show error message to user)
     } finally {
       setIsUploading(false)
     }

@@ -9,6 +9,15 @@ const api = axios.create({
   },
 })
 
+// Add a request interceptor to include the Clerk session token
+api.interceptors.request.use(async (config) => {
+  const token = await getToken()
+  if (token) {
+    config.headers["Authorization"] = `Bearer ${token}`
+  }
+  return config
+})
+
 export const getPosts = () => api.get("/posts")
 export const createPost = (post: any) => api.post("/posts", post)
 export const getSavedPosts = () => api.get("/saved_posts")
@@ -25,3 +34,9 @@ export const getPostInteractions = (postId: string) => api.get(`/interactions/${
 export const searchPosts = (query: string) => api.get("/posts/search", { params: { query } })
 
 export default api
+
+//This function needs to be implemented to get the token
+const getToken = async () => {
+  //Implementation to get token from Clerk or any other auth provider
+  return "token" //Replace with actual token retrieval logic
+}

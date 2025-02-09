@@ -6,7 +6,9 @@ import { X, FileCheck, File } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { EmojiBar } from "./EmojiBar"
 import { CommentInput } from "./CommentInput"
-import { getPosts, savePost, unsavePost, createInteraction, getPostInteractions } from "@/lib/api"
+import { getPosts, createInteraction, getPostInteractions } from "@/lib/api"
+import { useUser } from "@clerk/nextjs"
+import { useSavedPosts } from "@/contexts/SavedPostsContext"
 
 interface Drawing {
   id: string
@@ -27,16 +29,11 @@ interface Comment {
   y: number
 }
 
-interface SketchbookProps {
-  drawings: Drawing[]
-  savedPosts: Drawing[]
-  addSavedPost: (post: Drawing) => void
-  removeSavedPost: (id: string) => void
-}
-
 const DRAWINGS_PER_PAGE = 6
 
-export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeSavedPost }: SketchbookProps) {
+export default function Sketchbook() {
+  const { isSignedIn, user } = useUser()
+  const { savedPosts, addSavedPost, removeSavedPost } = useSavedPosts()
   const [currentPage, setCurrentPage] = useState(0)
   const [zoomedDrawing, setZoomedDrawing] = useState<Drawing | null>(null)
   const [stickers, setStickers] = useState<Sticker[]>([])
@@ -46,19 +43,21 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
   const [commentPosition, setCommentPosition] = useState<{ x: number; y: number } | null>(null)
   const sketchbookRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
-  const [drawingData, setDrawings] = useState<Drawing[]>([])
+  const [drawings, setDrawings] = useState<Drawing[]>([])
 
   useEffect(() => {
     const fetchPosts = async () => {
-      try {
-        const response = await getPosts()
-        setDrawings(response.data)
-      } catch (error) {
-        console.error("Error fetching posts:", error)
+      if (isSignedIn && user) {
+        try {
+          const response = await getPosts()
+          setDrawings(response.data)
+        } catch (error) {
+          console.error("Error fetching posts:", error)
+        }
       }
     }
     fetchPosts()
-  }, [])
+  }, [isSignedIn, user])
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -94,7 +93,7 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
   }
 
   const handleImageClick = async (e: React.MouseEvent<HTMLDivElement>) => {
-    if (imageRef.current) {
+    if (imageRef.current && zoomedDrawing) {
       const rect = imageRef.current.getBoundingClientRect()
       const x = ((e.clientX - rect.left) / rect.width) * 100
       const y = ((e.clientY - rect.top) / rect.height) * 100
@@ -102,7 +101,7 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
       if (selectedEmoji) {
         try {
           await createInteraction({
-            post_id: zoomedDrawing?.id,
+            post_id: zoomedDrawing.id,
             x_coordinate: Math.round(x),
             y_coordinate: Math.round(y),
             emoji: selectedEmoji,
@@ -145,11 +144,9 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
     const isPostSaved = savedPosts.some((post) => post.id === drawing.id)
     try {
       if (isPostSaved) {
-        await unsavePost(drawing.id)
-        removeSavedPost(drawing.id)
+        await removeSavedPost(drawing.id)
       } else {
-        await savePost(drawing.id)
-        addSavedPost(drawing)
+        await addSavedPost(drawing)
       }
     } catch (error) {
       console.error("Error saving/unsaving post:", error)
@@ -203,6 +200,10 @@ export default function Sketchbook({ drawings, savedPosts, addSavedPost, removeS
         />
       )
     }
+  }
+
+  if (!isSignedIn || !user) {
+    return <div className="flex items-center justify-center h-full">Please sign in to view drawings.</div>
   }
 
   if (drawings.length === 0) {
