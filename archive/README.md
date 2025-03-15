@@ -1,4 +1,4 @@
-# `Modo` web app
+# `Modo` web app v1.0.0
 
 ## Stack
 
@@ -7,6 +7,26 @@
 | [`modo`](./modo/) | Next.js Frontend, to be hosted on Vercel *(React, Tailwind CSS and Next.js)* |
 | [`back`](./back/) | FastAPI Backend, to be hosted on AWS |
 | [`supa`](./supa/) | Database, to be hosted on Supabase |
+
+## Architecture
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant ModoApp
+    participant Clerk
+    participant FastAPI
+    participant Supabase
+
+    User->>ModoApp: Interacts with app
+    ModoApp->>Clerk: Authenticate user
+    Clerk-->>ModoApp: Return authentication token
+    ModoApp->>FastAPI: Make authenticated API request
+    FastAPI->>Supabase: Query or modify data
+    Supabase-->>FastAPI: Return data
+    FastAPI-->>ModoApp: Return API response
+    ModoApp-->>User: Display result
+```
 
 ## Local deployment
 

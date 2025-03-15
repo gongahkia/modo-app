@@ -1,4 +1,5 @@
-![](https://img.shields.io/badge/modo_1.0.0-alpha-orange)
+![![](https://img.shields.io/badge/modo_1.0.0-deprecated-red)]()
+![](https://img.shields.io/badge/modo_2.0.0-build-orange)
 
 # `Modo` 🖌️
 
@@ -12,34 +13,26 @@ Currently served as a web app at [https://modo-live.vercel.app/](https://modo-li
 
 ## Rationale
 
-> TODO add more here
+...
 
 ## Screenshots
 
-> TODO add more here
+...
 
 ## Support
 
-> TODO add here
+...
 
 ## Architecture
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant ModoApp
-    participant Clerk
-    participant FastAPI
-    participant Supabase
+### DB
 
-    User->>ModoApp: Interacts with app
-    ModoApp->>Clerk: Authenticate user
-    Clerk-->>ModoApp: Return authentication token
-    ModoApp->>FastAPI: Make authenticated API request
-    FastAPI->>Supabase: Query or modify data
-    Supabase-->>FastAPI: Return data
-    FastAPI-->>ModoApp: Return API response
-    ModoApp-->>User: Display result
+```mermaid
+```
+
+### Overview
+
+```mermaid
 ```
 
 ## Disclaimer
@@ -48,13 +41,7 @@ sequenceDiagram
 
 ## License
 
-> TODO add license here similar to the one Zeming posted in his repo
-
-## Beta Testers
-
-My thanks to the following people for their patience and feedback.
-
-> TODO add here 
+> Add license here similar to the one Zeming posted in his repo ...
 
 ## Reference
 
