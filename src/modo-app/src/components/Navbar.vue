@@ -4,10 +4,6 @@
     <div class="flex space-x-4">
       <button @click="$router.push('/dashboard')" class="btn">Dashboard</button>
       <button @click="$router.push('/settings')" class="btn">Settings</button>
-    </div>
-
-    <!-- Logout Button -->
-    <div>
       <button @click="logout" class="btn-red">Logout</button>
     </div>
 
