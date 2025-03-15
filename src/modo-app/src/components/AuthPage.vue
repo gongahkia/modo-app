@@ -232,55 +232,12 @@ export default {
 };
 </script>
 <style scoped>
-.min-h-screen {
-  min-height: 100vh;
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  overflow-x: hidden;
-  width: 100%;
-}
-
-.background-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.3);
-  z-index: 5;
-}
-
-.auth-container {
-  max-width: 800px;
-  width: 90%;
-  padding: 2rem;
-  background-color: rgba(255, 255, 255, 0.85);
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-}
 
 .logo {
-  width: 80px;
+  width: 10%;
   height: auto;
   margin: 0 auto 1rem;
   display: block;
-}
-
-.cards-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%;
-  max-width: 100%;
 }
 
 .auth-card {
@@ -289,9 +246,9 @@ export default {
   border: 1px solid #ddd;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9); /* More opaque background */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 100%;
+  max-width: 100%; /* Ensure it doesn't overflow on mobile */
 }
 
 .card-title {
@@ -344,7 +301,6 @@ export default {
   margin-bottom: 1rem;
   padding: 0.75rem;
   border-radius: 0.25rem;
-  width: 100%;
 }
 
 .status-message.success {
@@ -364,7 +320,6 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -398,18 +353,52 @@ export default {
   gap: 1rem;
 }
 
+.min-h-screen {
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; 
+  width: 100%; 
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3); /* Translucent white */
+  z-index: 5; /* Between background and content */
+}
+
+.auth-container {
+  max-width: 800px;
+  width: 90%;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.85); /* Translucent white background */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%; /* Ensure it takes full width of parent */
+}
+
 @media (min-width: 768px) {
   .cards-container {
     flex-direction: row;
-    justify-content: center;
-  }
-  
-  .auth-card {
-    max-width: 350px;
-  }
-  
-  .logo {
-    width: 100px;
+    justify-content: center; /* Center the cards horizontally */
   }
 }
 </style>
