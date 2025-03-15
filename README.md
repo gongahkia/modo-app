@@ -1,4 +1,4 @@
-![![](https://img.shields.io/badge/modo_1.0.0-deprecated-red)]()
+[![](https://img.shields.io/badge/modo_1.0.0-deprecated-red)](https://github.com/gongahkia/modo-app/releases/tag/1.0.0)
 ![](https://img.shields.io/badge/modo_2.0.0-build-orange)
 
 # `Modo` 🖌️
