@@ -1,9 +1,5 @@
 <template>
   <nav class="bg-white shadow p-4 flex justify-between items-center">
-    <div class="flex items-center">
-      <img src="@/assets/modo.png" alt="Modo Logo" class="w-10 h-10 mr-4" />
-      <h1 class="text-xl font-bold">Modo</h1>
-    </div>
     <div class="flex space-x-4">
       <button @click="$router.push('/dashboard')" class="btn">Dashboard</button>
       <button @click="$router.push('/settings')" class="btn">Settings</button>
@@ -13,7 +9,7 @@
 
 <script>
 export default {
-  name: "Navbar",
+  name: "NavBar",
 };
 </script>
 

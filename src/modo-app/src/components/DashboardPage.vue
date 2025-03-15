@@ -1,9 +1,8 @@
 <template>
   <div class="min-h-screen bg-pastel">
-    <Navbar />
+    <NavBar />
     <header class="flex items-center justify-between p-4 bg-white shadow">
       <img src="@/assets/modo.png" alt="Modo Logo" style="width: 10%; height: auto;" />
-      <button @click="$router.push('/settings')" class="btn">Settings</button>
     </header>
     <main>
       <!-- Carousel -->
@@ -41,12 +40,12 @@
 <script>
 import { ref, onValue, update, push } from "firebase/database";
 import { auth, db } from "@/firebase";
-import Navbar from "@/components/Navbar.vue";
+import NavBar from "@/components/NavBar.vue";
 
 export default {
   name: "DashboardPage", 
   components: {
-    Navbar,
+    NavBar,
   },
   data() {
     return {
