@@ -6,7 +6,14 @@
     <form @submit.prevent="handleAuth">
       <input v-model="email" type="email" placeholder="Email" class="input" />
       <input v-model="password" type="password" placeholder="Password" class="input" />
-      <button type="submit" class="btn">Login / Register</button>
+      <input
+        v-if="isRegistering"
+        v-model="confirmPassword"
+        type="password"
+        placeholder="Confirm Password"
+        class="input"
+      />
+      <button type="submit" class="btn">{{ isRegistering ? "Register" : "Login / Register" }}</button>
     </form>
     <p class="text-xs mt-4 text-center">
       By signing up, you agree to our <a href="#" class="underline">Terms & Conditions</a>.
@@ -20,49 +27,56 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "fire
 import { ref, set } from "firebase/database";
 
 export default {
-  name: "AuthPage", 
+  name: "AuthPage",
   data() {
     return {
       email: "",
       password: "",
+      confirmPassword: "", 
+      isRegistering: false, 
     };
   },
   methods: {
     async handleAuth() {
       try {
-        // Attempt to log in
-        await signInWithEmailAndPassword(auth, this.email, this.password);
+        const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+        console.log(userCredential);
         this.$router.push("/dashboard");
-      } catch (error) {
-        // If login fails, register a new user
-        const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
-        const user = userCredential.user;
+      } catch (loginError) {
+        this.isRegistering = true;
+        if (this.isRegistering && this.password !== this.confirmPassword) {
+          console.log("Passwords do not match. Please try again.");
+          return;
+        }
 
-        // Generate a random 6-digit ID
-        const uniqueId = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Default settings for new users
-        const defaultSettings = {
-          appearance: {
-            theme: "light", // Default theme
-          },
-          notificationsEnabled: true, // Enable notifications by default
-        };
-
-        // Initialize the user object in Firebase Realtime Database
-        const userRef = ref(db, `users/${user.uid}`);
-        await set(userRef, {
-          name: "", // Placeholder for name (can be updated later in settings)
-          email: user.email,
-          profilePic: "", // Placeholder for profile picture URL
-          uniqueCode: uniqueId,
-          following: {}, // Empty following list
-          blacklist: {}, // Empty blacklist
-          settings: defaultSettings,
-          createdAt: new Date().toISOString(), // Store creation timestamp in ISO8601 format
-        });
-
-        this.$router.push("/dashboard");
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
+          console.log(userCredential);
+          const user = userCredential.user;
+          const uniqueId = Math.floor(100000 + Math.random() * 900000).toString();
+          const defaultSettings = {
+            appearance: {
+              theme: "light", 
+            },
+            notificationsEnabled: true, 
+          };
+          const userRef = ref(db, `users/${user.uid}`);
+          await set(userRef, {
+            name: "", 
+            email: user.email,
+            profilePic: "", 
+            uniqueCode: uniqueId,
+            following: {}, 
+            blacklist: {}, 
+            settings: defaultSettings,
+            createdAt: new Date().toISOString(), 
+          });
+          alert("Registration successful! Redirecting to the dashboard...");
+          this.$router.push("/dashboard");
+        } catch (registerError) {
+          console.error("Registration failed:", registerError.message);
+          alert("Registration failed. Please try again.");
+        }
       }
     },
   },

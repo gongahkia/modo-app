@@ -22,6 +22,10 @@
     <!-- Update User Settings -->
     <section class="p-4">
       <h2 class="text-xl font-bold">Update Settings:</h2>
+      <!-- Status Message -->
+      <div v-if="statusMessage" class="status-message" :class="{ success: isSuccess, error: !isSuccess }">
+        {{ statusMessage }}
+      </div>
       <form @submit.prevent="updateSettings">
         <input v-model="displayName" type="text" placeholder="Display Name" class="input" />
         <input v-model="photoURL" type="url" placeholder="Profile Picture URL" class="input" />
@@ -44,7 +48,7 @@ import { ref, onValue, update, remove } from "firebase/database";
 import NavBar from "@/components/NavBar.vue";
 
 export default {
-  name: "SettingsPage", 
+  name: "SettingsPage",
   components: {
     NavBar,
   },
@@ -56,6 +60,8 @@ export default {
       photoURL: "",
       theme: "light", // Default theme
       notificationsEnabled: true, // Default notifications setting
+      statusMessage: "", // Holds the status message for success/error
+      isSuccess: false, // Tracks whether the message indicates success or error
     };
   },
   methods: {
@@ -80,9 +86,14 @@ export default {
     removeFromBlacklist(blacklistedUid) {
       const userUid = auth.currentUser.uid;
       const blacklistRef = ref(db, `users/${userUid}/blacklist/${blacklistedUid}`);
-      remove(blacklistRef).then(() => {
-        this.fetchBlacklistedUsers(); // Refresh the list
-      });
+      remove(blacklistRef)
+        .then(() => {
+          this.fetchBlacklistedUsers(); // Refresh the list
+          this.showStatusMessage("User removed from blacklist successfully!", true);
+        })
+        .catch(() => {
+          this.showStatusMessage("Failed to remove user from blacklist.", false);
+        });
     },
     fetchSettings() {
       const userUid = auth.currentUser.uid;
@@ -105,11 +116,24 @@ export default {
         notificationsEnabled: this.notificationsEnabled,
       };
 
-      update(ref(db), updates).then(() => {
-        alert("Settings updated successfully!");
-        this.displayName = "";
-        this.photoURL = "";
-      });
+      update(ref(db), updates)
+        .then(() => {
+          this.showStatusMessage("Settings updated successfully!", true);
+          this.displayName = "";
+          this.photoURL = "";
+        })
+        .catch(() => {
+          this.showStatusMessage("Failed to update settings. Please try again.", false);
+        });
+    },
+    showStatusMessage(message, isSuccess) {
+      this.statusMessage = message;
+      this.isSuccess = isSuccess;
+
+      // Automatically hide the message after 3 seconds
+      setTimeout(() => {
+        this.statusMessage = "";
+      }, 3000);
     },
   },
   mounted() {
@@ -146,5 +170,18 @@ export default {
 }
 .btn-red:hover {
   background-color: #d32f2f; /* Darker red */
+}
+.status-message {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+}
+.status-message.success {
+  background-color: #d4edda; /* Light green for success */
+  color: #155724; /* Dark green text */
+}
+.status-message.error {
+  background-color: #f8d7da; /* Light red for error */
+  color: #721c24; /* Dark red text */
 }
 </style>
