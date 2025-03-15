@@ -9,7 +9,7 @@
 
 Modo is a social media app for artists.
 
-Currently served as a web app at [https://modo-live.vercel.app/](https://modo-live.vercel.app/).
+Modo is ***now live*** at [modo-live.netlify.app](https://modo-live.netlify.app/).
 
 ## Rationale
 
