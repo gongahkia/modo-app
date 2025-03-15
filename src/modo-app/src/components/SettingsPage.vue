@@ -58,10 +58,10 @@ export default {
       blacklistedUsers: [],
       displayName: "",
       photoURL: "",
-      theme: "light", // Default theme
-      notificationsEnabled: true, // Default notifications setting
-      statusMessage: "", // Holds the status message for success/error
-      isSuccess: false, // Tracks whether the message indicates success or error
+      theme: "light", 
+      notificationsEnabled: true, 
+      statusMessage: "", 
+      isSuccess: false, 
     };
   },
   methods: {
@@ -130,7 +130,6 @@ export default {
       this.statusMessage = message;
       this.isSuccess = isSuccess;
 
-      // Automatically hide the message after 3 seconds
       setTimeout(() => {
         this.statusMessage = "";
       }, 3000);
