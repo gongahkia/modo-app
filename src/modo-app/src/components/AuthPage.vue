@@ -2,7 +2,7 @@
 
   <div class="min-h-screen flex items-center justify-center relative">
     <DynamicBackground />
-    <div class="background-overlay"></div>
+
     <div class="auth-container z-10 relative">
       <img src="@/assets/modo.png" alt="Modo Logo" class="logo" />
       <h1 class="text-2xl font-bold mb-4">Welcome to Modo</h1>
@@ -240,15 +240,25 @@ export default {
   display: block;
 }
 
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .cards-container {
+    flex-direction: row;
+  }
+}
+
 .auth-card {
   flex: 1;
   padding: 1.5rem;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
-  background-color: rgba(255, 255, 255, 0.9); /* More opaque background */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 100%; /* Ensure it doesn't overflow on mobile */
+  opacity: 0.7;
 }
 
 .card-title {
@@ -359,46 +369,19 @@ export default {
   position: relative;
   align-items: center;
   justify-content: center;
-  overflow: hidden; 
-  width: 100%; 
-}
-
-.background-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.3); /* Translucent white */
-  z-index: 5; /* Between background and content */
+  overflow: hidden; /* Prevents any overflow from the background */
 }
 
 .auth-container {
   max-width: 800px;
   width: 90%;
   padding: 2rem;
-  background-color: rgba(255, 255, 255, 0.85); /* Translucent white background */
+  background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
   position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  z-index: 10; 
 }
 
-.cards-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%; /* Ensure it takes full width of parent */
-}
-
-@media (min-width: 768px) {
-  .cards-container {
-    flex-direction: row;
-    justify-content: center; /* Center the cards horizontally */
-  }
-}
 </style>
