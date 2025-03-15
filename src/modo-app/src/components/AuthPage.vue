@@ -104,8 +104,8 @@ import DynamicBackground from "@/components/DynamicBackground.vue";
 export default {
   name: "AuthPage",
   components: {
-    DynamicBackground,
-  }
+    DynamicBackground
+  },
   data() {
     return {
       isRegistering: false,
