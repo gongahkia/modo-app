@@ -11,6 +11,7 @@
     <!-- Blacklist Users -->
     <section class="p-4">
       <h2 class="text-xl font-bold">Blacklisted Users:</h2>
+      <p v-if="blacklistedUsers.length === 0">No users are currently blacklisted.</p>
       <ul>
         <li v-for="user in blacklistedUsers" :key="user.uid">
           {{ user.name }} ({{ user.email }})
@@ -27,8 +28,9 @@
         {{ statusMessage }}
       </div>
       <form @submit.prevent="updateSettings">
-        <input v-model="displayName" type="text" placeholder="Display Name" class="input" />
-        <input v-model="photoURL" type="url" placeholder="Profile Picture URL" class="input" />
+        <!-- Placeholder reflects current value from Firebase -->
+        <input v-model="displayName" type="text" :placeholder="currentDisplayName" class="input" />
+        <input v-model="photoURL" type="url" :placeholder="currentPhotoURL" class="input" />
         <select v-model="theme" class="input">
           <option value="light">Light Theme</option>
           <option value="dark">Dark Theme</option>
@@ -58,10 +60,12 @@ export default {
       blacklistedUsers: [],
       displayName: "",
       photoURL: "",
-      theme: "light", 
-      notificationsEnabled: true, 
-      statusMessage: "", 
-      isSuccess: false, 
+      theme: "light", // Default theme
+      notificationsEnabled: true, // Default notifications setting
+      statusMessage: "", // Holds the status/error message
+      isSuccess: false, // Tracks whether the message indicates success or error
+      currentDisplayName: "", // Current display name from Firebase
+      currentPhotoURL: "", // Current photo URL from Firebase
     };
   },
   methods: {
@@ -83,9 +87,24 @@ export default {
         }));
       });
     },
+    fetchSettings() {
+      const userUid = auth.currentUser.uid;
+      const settingsRef = ref(db, `users/${userUid}`);
+      
+      onValue(settingsRef, (snapshot) => {
+        const data = snapshot.val() || {};
+        
+        // Retrieve settings and current values
+        this.theme = data.settings?.appearance?.theme || "light";
+        this.notificationsEnabled = data.settings?.notificationsEnabled ?? true;
+        this.currentDisplayName = data.name || "Anonymous";
+        this.currentPhotoURL = data.profilePic || "No URL Provided";
+      });
+    },
     removeFromBlacklist(blacklistedUid) {
       const userUid = auth.currentUser.uid;
       const blacklistRef = ref(db, `users/${userUid}/blacklist/${blacklistedUid}`);
+      
       remove(blacklistRef)
         .then(() => {
           this.fetchBlacklistedUsers(); // Refresh the list
@@ -94,15 +113,6 @@ export default {
         .catch(() => {
           this.showStatusMessage("Failed to remove user from blacklist.", false);
         });
-    },
-    fetchSettings() {
-      const userUid = auth.currentUser.uid;
-      const settingsRef = ref(db, `users/${userUid}/settings`);
-      onValue(settingsRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        this.theme = data.appearance?.theme || "light";
-        this.notificationsEnabled = data.notificationsEnabled ?? true;
-      });
     },
     updateSettings() {
       const userUid = auth.currentUser.uid;
