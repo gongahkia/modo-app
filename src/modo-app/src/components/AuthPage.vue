@@ -1,6 +1,9 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-pastel">
-    <div class="auth-container">
+
+  <div class="min-h-screen flex items-center justify-center relative">
+    <DynamicBackground />
+
+    <div class="auth-container z-10 relative">
       <img src="@/assets/modo.png" alt="Modo Logo" class="logo" />
       <h1 class="text-2xl font-bold mb-4">Welcome to Modo</h1>
       
@@ -43,7 +46,7 @@
     </div>
     
     <!-- Terms and Conditions Modal -->
-    <div v-if="showTermsModal" class="terms-modal-overlay" @click.self="closeTermsModal">
+    <div v-if="showTermsModal" class="terms-modal-overlay z-20" @click.self="closeTermsModal">
       <div class="terms-modal" ref="termsModal">
         <h2 class="text-xl font-bold mb-4">Terms and Conditions</h2>
         <div class="terms-content" ref="termsContent" @scroll="checkScroll">
@@ -96,9 +99,13 @@
 import { auth, db } from "@/firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { ref, set } from "firebase/database";
+import DynamicBackground from "@/components/DynamicBackground.vue"; 
 
 export default {
   name: "AuthPage",
+  components: {
+    DynamicBackground
+  }
   data() {
     return {
       isRegistering: false,
@@ -225,15 +232,6 @@ export default {
 };
 </script>
 <style scoped>
-.auth-container {
-  max-width: 800px;
-  width: 90%;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 0 auto; 
-}
 
 .logo {
   width: 10%;
@@ -332,11 +330,10 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 20;
 }
 
 .terms-modal {
@@ -369,8 +366,22 @@ export default {
 .min-h-screen {
   min-height: 100vh;
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: center;
-  background-color: #f5f7fa;
+  overflow: hidden; /* Prevents any overflow from the background */
 }
+
+.auth-container {
+  max-width: 800px;
+  width: 90%;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  position: relative;
+  z-index: 10; 
+}
+
 </style>
