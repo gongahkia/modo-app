@@ -102,13 +102,9 @@ Firebase Realtime Database currently follows the below schema.
 ```mermaid
 ```
 
-## Disclaimer
-
-> TODO add legal disclaimer here
-
 ## License
 
-> Add license here similar to the one Zeming posted in his repo ...
+...
 
 ## Reference
 
