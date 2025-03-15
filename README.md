@@ -1,5 +1,7 @@
 [![](https://img.shields.io/badge/modo_1.0.0-deprecated-red)](https://github.com/gongahkia/modo-app/releases/tag/1.0.0)
 ![](https://img.shields.io/badge/modo_2.0.0-build-orange)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bfe2c10c-d1de-4f3b-b623-82f3872bc1ed/deploy-status)](https://app.netlify.com/sites/modo-live/deploys)
+
 
 # `Modo` 🖌️
 
