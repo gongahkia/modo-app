@@ -23,11 +23,76 @@ Currently served as a web app at [https://modo-live.vercel.app/](https://modo-li
 
 ...
 
+## Stack
+
+* Vue.js
+* Firebase
+* ...
+
 ## Architecture
 
 ### DB
 
-```mermaid
+Firebase Realtime Database currently follows the below schema.
+
+```json
+{
+  "users": {
+    "userId": {
+      "name": "string",
+      "email": "string",
+      "profilePic": "url",
+      "uniqueCode": "string", 
+      "following": {
+        "followedUserId": true
+      },
+      "blacklist": {
+        "blacklistedUserId": {
+          "name": "string",
+          "email": "string"
+        }
+      },
+      "settings": {
+        "appearance": {
+          "theme": "light" 
+        },
+        "notificationsEnabled": true
+      },
+      "createdAt": "ISO8601"
+    }
+  },
+  "posts": {
+    "postId": {
+      "authorId": "userId",
+      "imageUrl": "url",
+      "caption": "string", 
+      "timestamp": "ISO8601",
+      "emojis": {
+        "emojiType1": ["userId"], 
+        "emojiType2": ["userId"]
+      },
+      "comments": {
+        "commentId": {
+          "authorId": "userId",
+          "text": "string",
+          "timestamp": "ISO8601"
+        }
+      }
+    }
+  },
+  "artLimits": { // tracks how many posts a user has created in a week to enforce the 3-post-per-week limit
+    "userId": {
+      "weekStartTimestamp": { // timestamp of the start of the week
+        "count": 3 // number of posts created this week
+      }
+    }
+  },
+  "qrCodesToUsersMap": { // maps unique QR codes to user IDs for adding friends
+    "uniqueCodeString1234567890abcdefg12345": { // generated QR code string (hashed or UUID)
+      "userId": true
+    }
+  }
+}
 ```
 
 ### Overview
