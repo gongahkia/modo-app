@@ -2,16 +2,16 @@
   <canvas ref="canvasRef" class="absolute top-0 left-0 w-full h-full"></canvas>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'DynamicBackground'
 }
 </script>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const canvasRef = ref(null)
+const canvasRef = ref<HTMLCanvasElement | null>(null)
 
 onMounted(() => {
   const canvas = canvasRef.value
@@ -23,12 +23,18 @@ onMounted(() => {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
 
-  const lines = []
-  const silhouettes = []
-  const emojis = []
-  const collisionPairs = new Set()
+  const lines: Line[] = []
+  const silhouettes: Silhouette[] = []
+  const emojis: Emoji[] = []
+  const collisionPairs = new Set<string>()
 
   class Line {
+    points: { x: number; y: number }[]
+    color: string
+    speed: number
+    direction: { x: number; y: number }
+    curveChance: number
+
     constructor() {
       this.points = [{ x: Math.random() * canvas.width, y: Math.random() * canvas.height }]
       this.color = `hsl(${Math.random() * 360}, 50%, 50%)`
@@ -79,6 +85,12 @@ onMounted(() => {
   }
 
   class Silhouette {
+    x: number
+    y: number
+    speed: number
+    size: number
+    direction: number
+
     constructor() {
       this.direction = Math.random() < 0.5 ? -1 : 1 // -1 for left, 1 for right
       this.x = this.direction === 1 ? -50 : canvas.width + 50 // Start off-screen
@@ -138,7 +150,13 @@ onMounted(() => {
   }
 
   class Emoji {
-    constructor(x, y) {
+    x: number
+    y: number
+    emoji: string
+    opacity: number
+    speed: number
+
+    constructor(x: number, y: number) {
       this.x = x
       this.y = y
       this.emoji = this.getRandomEmoji()
