@@ -18,10 +18,6 @@
             <input v-model="loginForm.password" type="password" placeholder="Password" class="input" required />
             <button type="submit" class="btn">Login</button>
           </form>
-          <p class="text-sm mt-4 text-center">
-            Don't have an account? 
-            <a href="#" @click.prevent="isRegistering = true" class="underline">Register</a>
-          </p>
         </div>
         
         <!-- Registration Card -->
@@ -42,10 +38,6 @@
             </label>
             <button type="submit" class="btn">Register</button>
           </form>
-          <p class="text-sm mt-4 text-center">
-            Already have an account? 
-            <a href="#" @click.prevent="isRegistering = false" class="underline">Login</a>
-          </p>
         </div>
       </div>
     </div>
