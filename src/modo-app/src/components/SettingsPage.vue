@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-pastel">
+    <Navbar />
     <!-- Unique Code & QR Code -->
     <section class="p-4">
       <h2 class="text-xl font-bold">Your Unique Code:</h2>
@@ -40,8 +41,13 @@
 <script>
 import { auth, db } from "@/firebase";
 import { ref, onValue, update, remove } from "firebase/database";
+import Navbar from "@/components/Navbar.vue";
 
 export default {
+  name: "SettingsPage", 
+  components: {
+    Navbar,
+  },
   data() {
     return {
       uniqueCode: "",

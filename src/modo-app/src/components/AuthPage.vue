@@ -1,7 +1,8 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center bg-pastel">
-    <img src="@/assets/modo.png" alt="Modo Logo" class="w-24 mb-6" />
+  <div class="min-h-screen flex items-center justify-center bg-pastel">
+    <img src="@/assets/modo.png" alt="Modo Logo" style="width: 10%; height: auto;" />
     <h1 class="text-2xl font-bold mb-4">Welcome to Modo</h1>
+    <p>Sign up or log in to continue</p>
     <form @submit.prevent="handleAuth">
       <input v-model="email" type="email" placeholder="Email" class="input" />
       <input v-model="password" type="password" placeholder="Password" class="input" />
@@ -19,6 +20,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "fire
 import { ref, set } from "firebase/database";
 
 export default {
+  name: "AuthPage", 
   data() {
     return {
       email: "",
