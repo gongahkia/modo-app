@@ -5,12 +5,72 @@
 </template>
 
 <script>
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getDatabase, ref, onValue } from 'firebase/database';
+
 export default {
   name: "App",
+  data() {
+      return {
+        auth: null,
+        userId: null
+      };
+    },
+    mounted() {
+      // Initialize Firebase Auth
+      this.auth = getAuth();
+      
+      // Listen for auth state changes
+      onAuthStateChanged(this.auth, (user) => {
+        if (user) {
+          // User is signed in
+          this.userId = user.uid;
+          this.fetchThemePreference();
+        } else {
+          // User is signed out, use default theme
+          document.documentElement.classList.remove('dark-theme');
+        }
+      });
+    },
+    methods: {
+      fetchThemePreference() {
+        const db = getDatabase();
+        const themeRef = ref(db, `users/${this.userId}/settings/appearance/theme`);
+        
+        onValue(themeRef, (snapshot) => {
+          const theme = snapshot.val();
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark-theme');
+          } else {
+            document.documentElement.classList.remove('dark-theme');
+          }
+      });
+    }
+  }
 };
 </script>
 
 <style>
+:root {
+  /* Light theme variables (default) */
+  --bg-color: #f8f4f9;
+  --text-color: #333333;
+  --input-border: #ddd;
+  --btn-bg: #a3d2ca;
+  --btn-hover: #71c0b2;
+  --btn-text: #fff;
+}
+
+.dark-theme {
+  /* Dark theme variables */
+  --bg-color: #2d3748;
+  --text-color: #f7fafc;
+  --input-border: #4a5568;
+  --btn-bg: #2c7a7b;
+  --btn-hover: #285e61;
+  --btn-text: #f7fafc;
+}
+
 /* TailwindCSS will handle most of the styling. Add custom styles here if needed. */
 body {
   font-family: 'Inter', sans-serif;
