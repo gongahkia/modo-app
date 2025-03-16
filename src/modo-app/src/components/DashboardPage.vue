@@ -26,18 +26,16 @@
             </div>
           </div>
 
-          <div class="comments-section">
-            <ul v-if="hasComments" class="comments-list">
-              <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
-                <div class="comment-header">
-                  <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
-                  <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
-                </div>
-                <p class="comment-text">{{ comment.text }}</p>
-              </li>
-            </ul>
-            <p v-else class="no-comments">It's quiet here. Leave a comment!</p>
-          </div>
+          <p v-if="Object.keys(post.comments || {}).length === 0">It's quiet here. Leave a comment!</p>
+          <ul class="comments-list">
+            <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
+              <div class="comment-header">
+                <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
+                <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
+              </div>
+              <p class="comment-text">{{ comment.text }}</p>
+            </li>
+          </ul>
 
         </div>
       </div>
@@ -67,11 +65,6 @@ export default {
       emojis: ["👍", "❤️", "😂", "🔥", "🎨"], // Available emojis
     };
   },
-  computed: {
-    hasComments() {
-      return post.comments && Object.keys(post.comments).length > 0;
-    }
-  },
   methods: {
     fetchPosts() {
       const postsRef = ref(db, "posts");
@@ -90,7 +83,7 @@ export default {
       const commentsRef = ref(db, `posts/${postId}/comments`);
       const newCommentKey = push(commentsRef).key;
       const updates = {};
-      if (this.newComment) == "" {
+      if (this.newComment == "") {
         return // ignore the empty comment 
       }
       updates[`posts/${postId}/comments/${newCommentKey}`] = {
@@ -238,17 +231,5 @@ export default {
 .comment-text {
   font-size: 0.95rem;
   margin: 0;
-}
-
-.comments-section {
-  margin-top: 12px;
-}
-
-.no-comments {
-  text-align: center;
-  color: #888;
-  font-size: 0.9rem;
-  font-style: italic;
-  padding: 8px 0;
 }
 </style>
