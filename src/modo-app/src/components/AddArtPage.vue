@@ -26,7 +26,7 @@
 
 <script>
 import { ref, push, set } from "firebase/database";
-import { auth, db, storage } from "@/firebase";
+import { auth, db } from "@/firebase";
 import NavBar from "@/components/NavBar.vue";
 
 export default {
