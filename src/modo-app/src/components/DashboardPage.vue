@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen bg-pastel">
     <NavBar />
-    <header class="flex items-center justify-between p-4 bg-white shadow">
-      <img src="@/assets/modo.png" alt="Modo Logo" style="width: 10%; height: auto;" />
-    </header>
     <main>
       <!-- Carousel -->
+      <div :if="posts.length == 0" class="carousel">
+        <p>No posts found. Follow someone to get started.</p>
+      </div>  
       <div v-for="post in posts" :key="post.id" class="carousel-item">
         <img :src="post.imageUrl" alt="" @click="selectPost(post.id)" />
         <p class="caption">{{ post.caption }}</p> <!-- Display post caption -->
