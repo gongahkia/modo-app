@@ -26,15 +26,18 @@
             </div>
           </div>
 
-          <ul class="comments-list">
-            <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
-              <div class="comment-header">
-                <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
-                <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
-              </div>
-              <p class="comment-text">{{ comment.text }}</p>
-            </li>
-          </ul>
+          <div class="comment-section">
+            <ul v-if="hasComments" class="comments-list">
+              <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
+                <div class="comment-header">
+                  <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
+                  <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
+                </div>
+                <p class="comment-text">{{ comment.text }}</p>
+              </li>
+            </ul>
+            <p v-else class="no-comments">No comments yet. Leave a comment!</p>
+          </div>
 
         </div>
       </div>
@@ -120,6 +123,13 @@ export default {
       return date.toLocaleString('en-US', options);
     }
   },
+
+  computed: {
+    hasComments() {
+      return post.comments && Object.keys(post.comments).length > 0;
+    }
+  }
+
   mounted() {
     this.fetchPosts();
   },
@@ -227,5 +237,17 @@ export default {
 .comment-text {
   font-size: 0.95rem;
   margin: 0;
+}
+
+.comments-section {
+  margin-top: 12px;
+}
+
+.no-comments {
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+  font-style: italic;
+  padding: 8px 0;
 }
 </style>
