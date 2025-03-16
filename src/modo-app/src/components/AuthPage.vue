@@ -236,7 +236,7 @@ export default {
 }
 
 .logo {
-  width: 50%;
+  width: 30%;
   height: auto;
   margin: 0 auto 1rem;
   display: block;
