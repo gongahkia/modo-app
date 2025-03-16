@@ -2,11 +2,13 @@ import { createRouter, createWebHistory } from "vue-router";
 import AuthPage from "@/components/AuthPage.vue";
 import DashboardPage from "@/components/DashboardPage.vue";
 import SettingsPage from "@/components/SettingsPage.vue";
+import AddArtPage from "@/views/AddArtPage.vue";
 
 const routes = [
   { path: "/", name: "AuthPage", component: AuthPage },
   { path: "/dashboard", name: "DashboardPage", component: DashboardPage },
   { path: "/settings", name: "SettingsPage", component: SettingsPage },
+  { path: '/add-art', name: 'AddArt', component: AddArtPage },
 ];
 
 const router = createRouter({
