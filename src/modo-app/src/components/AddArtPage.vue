@@ -26,7 +26,6 @@
 
 <script>
 import { ref, push, set } from "firebase/database";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "@/firebase";
 import NavBar from "@/components/NavBar.vue";
 
