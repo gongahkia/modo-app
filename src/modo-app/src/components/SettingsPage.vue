@@ -81,6 +81,7 @@
 </template>
 
 <script>
+/* global QRCode */
 import { auth, db } from "@/firebase";
 import { ref, onValue, update, remove } from "firebase/database";
 import NavBar from "@/components/NavBar.vue";

@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "firebase": "^11.4.0",
     "postcss": "^8.5.3",
+    "qrcodejs": "^1.0.0",
     "tailwindcss": "^4.0.14",
     "vue": "^3.2.13",
     "vue-router": "^4.5.0"
