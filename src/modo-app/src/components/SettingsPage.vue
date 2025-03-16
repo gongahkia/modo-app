@@ -5,11 +5,7 @@
     <section class="p-4">
       <h2 class="text-xl font-bold">Your Unique Code:</h2>
       <p>{{ uniqueCode }}</p>
-      <section class="p-4">
-        <h2 class="text-xl font-bold">Your Unique Code:</h2>
-        <p>{{ uniqueCode }}</p>
-        <div id="qrcode" class="mt-4"></div>
-      </section>
+      <!-- FUA to edit here so that QR Code generation can be added here -->
     </section>
 
     <!-- Blacklist Users -->
@@ -81,7 +77,6 @@
 </template>
 
 <script>
-/* global QRCode */
 import { auth, db } from "@/firebase";
 import { ref, onValue, update, remove } from "firebase/database";
 import NavBar from "@/components/NavBar.vue";
@@ -114,9 +109,6 @@ export default {
       const userRef = ref(db, `users/${userUid}/uniqueCode`);
       onValue(userRef, (snapshot) => {
         this.uniqueCode = snapshot.val();
-        this.$nextTick(() => {
-          this.generateQRCode();
-        });
       });
     },
     fetchBlacklistedUsers() {
@@ -267,21 +259,6 @@ export default {
         this.statusMessage = "";
       }, 3000);
     },
-
-    generateQRCode() {
-      if (!this.uniqueCode) return;
-      const qrcodeContainer = document.getElementById("qrcode");
-      qrcodeContainer.innerHTML = "";
-      new QRCode(qrcodeContainer, {
-        text: this.uniqueCode,
-        width: 180,
-        height: 180,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-      });
-    },
-
   },
   mounted() {
     if (auth.currentUser) {
@@ -338,13 +315,5 @@ export default {
 .status-message.error {
   background-color: #f8d7da; /* Light red for error */
   color: #721c24; /* Dark red text */
-}
-
-#qrcode {
-  display: inline-block;
-  background-color: white;
-  padding: 10px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
