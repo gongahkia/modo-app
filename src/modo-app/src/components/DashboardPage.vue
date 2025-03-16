@@ -7,9 +7,10 @@
         <p>No posts found. Follow someone to get started.</p>
       </div>  
       <div v-for="post in posts" :key="post.id" class="carousel-item">
-        <img :src="post.imageUrl" alt="" @click="selectPost(post.id)" />
-        <p class="caption">{{ post.caption }}</p> <!-- Display post caption -->
-        <!-- Emoji and comments -->
+        <div class="post-container">
+          <img class="post-image" :src="post.imageUrl" alt="" @click="selectPost(post.id)" />
+          <p class="caption">{{ post.caption }}</p> 
+        </div>
         <div v-if="selectedPost === post.id">
           <textarea v-model="newComment" placeholder="Add a comment..." class="input"></textarea>
           <button @click="addComment(post.id)" class="btn">Add Comment</button>
@@ -107,7 +108,21 @@ export default {
 .caption {
   margin-top: 0.5rem;
   font-size: 1rem;
+  text-align: center;
   color: #555;
+  max-width: 250px; 
+}
+.post-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.post-image {
+  width: 250px; /* Fixed width */
+  height: 250px; /* Fixed height */
+  object-fit: cover; /* Maintains aspect ratio */
+  cursor: pointer;
 }
 .input {
   display: block;
