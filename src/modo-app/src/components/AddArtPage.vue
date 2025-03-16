@@ -59,19 +59,21 @@ export default {
         alert("Please select an image to upload");
         return;
       }
-      
       this.isUploading = true;
-      
       try {
         const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
+        console.log(imgbbApiKey);
         if (!imgbbApiKey) {
           throw new Error("ImgBB API Key not configured");
         }
         const base64Image = await this.fileToBase64(this.selectedFile);
+        const base64Data = base64Image.split(',')[1]; 
+        if (!base64Data) {
+          throw new Error("Failed to convert image to base64");
+        }
         const formData = new FormData();
         formData.append('key', imgbbApiKey);
-        formData.append('image', base64Image.split(',')[1]); 
-        formData.append('name', Date.now() + '_' + this.selectedFile.name);
+        formData.append('image', base64Data);
         const response = await fetch('https://api.imgbb.com/1/upload', {
           method: 'POST',
           body: formData
@@ -82,7 +84,7 @@ export default {
           const newPostRef = push(postsRef);
           await set(newPostRef, {
             authorId: auth.currentUser.uid,
-            imageUrl: result.data.url, 
+            imageUrl: result.data.url,
             caption: this.caption,
             timestamp: new Date().toISOString(),
             comments: {},
@@ -90,7 +92,7 @@ export default {
           });
           this.$router.push('/dashboard');
         } else {
-          throw new Error(result.data?.error?.message || "Upload failed");
+          throw new Error(result.error?.message || "Upload failed");
         }
       } catch (error) {
         console.error("Error uploading artwork:", error);
@@ -102,10 +104,14 @@ export default {
 
     fileToBase64(file) {
       return new Promise((resolve, reject) => {
+        if (!file) {
+          reject(new Error("No file provided"));
+          return;
+        }
         const reader = new FileReader();
-        reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
       });
     }
 
