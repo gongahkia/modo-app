@@ -126,13 +126,11 @@ export default {
       return date.toLocaleString('en-US', options);
     }
   },
-
   computed: {
     hasComments() {
       return post.comments && Object.keys(post.comments).length > 0;
     }
-  }
-
+  },
   mounted() {
     this.fetchPosts();
   },
