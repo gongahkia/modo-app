@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import AuthPage from "@/components/AuthPage.vue";
 import DashboardPage from "@/components/DashboardPage.vue";
 import SettingsPage from "@/components/SettingsPage.vue";
-import AddArtPage from "@/views/AddArtPage.vue";
+import AddArtPage from "@/components/AddArtPage.vue";
 
 const routes = [
   { path: "/", name: "AuthPage", component: AuthPage },
