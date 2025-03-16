@@ -60,22 +60,27 @@ export default {
         return;
       }
       
-      this.isUploading = true;
+      // Check user authentication
+      if (!auth.currentUser) {
+        alert("You must be logged in to upload artwork");
+        this.$router.push('/login');
+        return;
+      }
       
+      this.isUploading = true;
       try {
-        // Get Imgur Client ID from environment variables
         const imgurClientId = import.meta.env.VITE_IMGUR_CLIENT_ID;
+        console.log("Imgur Client ID available:", !!imgurClientId);
         
         if (!imgurClientId) {
           throw new Error("Imgur Client ID not configured");
         }
         
-        // Create form data for Imgur upload
         const formData = new FormData();
         formData.append('image', this.selectedFile);
         formData.append('title', this.caption);
         
-        // Upload to Imgur
+        console.log("Preparing to upload to Imgur...");
         const response = await fetch('https://api.imgur.com/3/image', {
           method: 'POST',
           headers: {
@@ -84,29 +89,41 @@ export default {
           body: formData
         });
         
+        // Log the response status
+        console.log("Imgur API response status:", response.status);
+        
+        // Handle non-200 responses properly
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Imgur API error:", errorText);
+          throw new Error(`Imgur API error: ${response.status} ${errorText}`);
+        }
+        
         const result = await response.json();
+        console.log("Imgur upload result:", result);
         
         if (result.success) {
-          // Create post in database with Imgur URL
           const postsRef = ref(db, "posts");
           const newPostRef = push(postsRef);
-          
           await set(newPostRef, {
             authorId: auth.currentUser.uid,
-            imageUrl: result.data.link, // Imgur image URL
+            imageUrl: result.data.link, 
             caption: this.caption,
             timestamp: new Date().toISOString(),
             comments: {},
             emojis: {}
           });
-          
-          // Navigate back to dashboard
           this.$router.push('/dashboard');
         } else {
-          throw new Error(result.data.error);
+          throw new Error(result.data?.error || "Unknown Imgur upload error");
         }
       } catch (error) {
         console.error("Error uploading artwork:", error);
+        console.error("Error details:", {
+          auth: !!auth,
+          currentUser: !!auth?.currentUser,
+          imgurClientId: !!import.meta.env.VITE_IMGUR_CLIENT_ID
+        });
         alert("Failed to upload artwork. Please try again.");
       } finally {
         this.isUploading = false;
