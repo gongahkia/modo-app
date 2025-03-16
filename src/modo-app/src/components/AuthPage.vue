@@ -28,7 +28,6 @@
             <input v-model="registerForm.password" type="password" placeholder="Password" class="input" required />
             <input v-model="registerForm.confirmPassword" type="password" placeholder="Confirm Password" class="input" required />
             <input v-model="registerForm.name" type="text" placeholder="Your Name" class="input" required />
-            <input v-model="registerForm.profilePicUrl" type="url" placeholder="Profile Picture URL" class="input" />
             <select v-model="registerForm.themePreference" class="input">
               <option value="light">Light Theme</option>
               <option value="dark">Dark Theme</option>
@@ -170,7 +169,7 @@ export default {
         await set(userRef, {
           name: this.registerForm.name || "",
           email: user.email,
-          profilePic: this.registerForm.profilePicUrl || "",
+          profilePic: "",
           uniqueCode: uniqueId,
           following: {},
           blacklist: {},
