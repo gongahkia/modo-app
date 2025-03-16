@@ -96,7 +96,7 @@
                 Infringes on intellectual property rights of others
               </li>
               <li>
-                Contains viruses, malware, or other harmfli code
+                Contains viruses, malware, or other harmful code
               </li>
               <li>
                   Constitutes hate speech, harassment, or threats
