@@ -5,7 +5,9 @@
     <section class="p-4">
       <h2 class="text-xl font-bold">Your Unique Code:</h2>
       <p>{{ uniqueCode }}</p>
-      <!-- FUA to edit here so that QR Code generation can be added here -->
+      <div class="mt-4" v-if="uniqueCode">
+        <qrcode-vue :value="uniqueCode" :size="180" level="H" />
+      </div>
     </section>
 
     <!-- Blacklist Users -->
@@ -80,11 +82,13 @@
 import { auth, db } from "@/firebase";
 import { ref, onValue, update, remove } from "firebase/database";
 import NavBar from "@/components/NavBar.vue";
+import QrcodeVue from 'qrcode.vue';
 
 export default {
   name: "SettingsPage",
   components: {
     NavBar,
+    QrcodeVue,
   },
   data() {
     return {
