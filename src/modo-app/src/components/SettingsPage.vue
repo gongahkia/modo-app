@@ -36,7 +36,6 @@
         
         <!-- Profile Picture Upload -->
         <div class="mb-4">
-          <label class="block mb-2">Profile Picture</label>
           <div class="flex items-center">
             <div v-if="currentPhotoURL || profileImagePreview" class="mr-4">
               <img 
