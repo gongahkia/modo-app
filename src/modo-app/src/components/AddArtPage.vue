@@ -101,7 +101,6 @@ export default {
       }
     },
 
-    // Helper method to convert File to base64
     fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -111,7 +110,6 @@ export default {
       });
     }
 
-    
   }
 };
 </script>
