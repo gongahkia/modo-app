@@ -36,7 +36,6 @@ export default {
       fetchThemePreference() {
         const db = getDatabase();
         const themeRef = ref(db, `users/${this.userId}/settings/appearance/theme`);
-        
         onValue(themeRef, (snapshot) => {
           const theme = snapshot.val();
           if (theme === 'dark') {
