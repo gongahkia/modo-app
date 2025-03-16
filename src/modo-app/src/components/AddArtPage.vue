@@ -69,45 +69,46 @@ export default {
       
       this.isUploading = true;
       try {
-        const imgurClientId = import.meta.env.VITE_IMGUR_CLIENT_ID;
-        console.log("Imgur Client ID available:", !!imgurClientId);
+        const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
         
-        if (!imgurClientId) {
-          throw new Error("Imgur Client ID not configured");
+        if (!imgbbApiKey) {
+          throw new Error("ImgBB API Key not configured");
         }
         
-        const formData = new FormData();
-        formData.append('image', this.selectedFile);
-        formData.append('title', this.caption);
+        // Convert file to base64
+        const reader = new FileReader();
+        const base64Image = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(this.selectedFile);
+        });
         
-        console.log("Preparing to upload to Imgur...");
-        const response = await fetch('https://api.imgur.com/3/image', {
+        // Prepare form data for ImgBB
+        const formData = new FormData();
+        formData.append('key', imgbbApiKey);
+        formData.append('image', base64Image);
+        formData.append('name', this.selectedFile.name);
+        
+        // Optional: set expiration (in seconds, e.g., 600 for 10 minutes)
+        // formData.append('expiration', '600');
+        
+        const response = await fetch('https://api.imgbb.com/1/upload', {
           method: 'POST',
-          headers: {
-            'Authorization': `Client-ID ${imgurClientId}`
-          },
           body: formData
         });
         
-        // Log the response status
-        console.log("Imgur API response status:", response.status);
-        
-        // Handle non-200 responses properly
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Imgur API error:", errorText);
-          throw new Error(`Imgur API error: ${response.status} ${errorText}`);
+          throw new Error(`ImgBB API error: ${response.status}`);
         }
         
         const result = await response.json();
-        console.log("Imgur upload result:", result);
         
         if (result.success) {
           const postsRef = ref(db, "posts");
           const newPostRef = push(postsRef);
           await set(newPostRef, {
             authorId: auth.currentUser.uid,
-            imageUrl: result.data.link, 
+            imageUrl: result.data.url, 
             caption: this.caption,
             timestamp: new Date().toISOString(),
             comments: {},
@@ -115,20 +116,16 @@ export default {
           });
           this.$router.push('/dashboard');
         } else {
-          throw new Error(result.data?.error || "Unknown Imgur upload error");
+          throw new Error("Failed to upload image to ImgBB");
         }
       } catch (error) {
         console.error("Error uploading artwork:", error);
-        console.error("Error details:", {
-          auth: !!auth,
-          currentUser: !!auth?.currentUser,
-          imgurClientId: !!import.meta.env.VITE_IMGUR_CLIENT_ID
-        });
         alert("Failed to upload artwork. Please try again.");
       } finally {
         this.isUploading = false;
       }
     }
+
 
   }
 };
