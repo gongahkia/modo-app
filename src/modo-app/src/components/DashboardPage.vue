@@ -14,20 +14,28 @@
         <div v-if="selectedPost === post.id">
           <textarea v-model="newComment" placeholder="Add a comment..." class="input"></textarea>
           <button @click="addComment(post.id)" class="btn">Add Comment</button>
+
           <div class="emoji-section">
             <span v-for="emoji in emojis" :key="emoji" @click="addEmoji(post.id, emoji)" class="emoji">{{ emoji }}</span>
           </div>
-          <!-- Display emojis/comments -->
-          <ul>
-            <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp">
-              {{ comment.text }}
+
+          <div class="emoji-container">
+            <div v-for="(users, emoji) in post.emojis || {}" :key="emoji" class="emoji-item">
+              <span class="emoji">{{ emoji }}</span>
+              <span class="emoji-count">{{ users.length }}</span>
+            </div>
+          </div>
+
+          <ul class="comments-list">
+            <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
+              <div class="comment-header">
+                <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
+                <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
+              </div>
+              <p class="comment-text">{{ comment.text }}</p>
             </li>
           </ul>
-          <ul>
-            <li v-for="(users, emoji) in post.emojis || {}" :key="emoji">
-              {{ emoji }}: {{ users.length }}
-            </li>
-          </ul>
+
         </div>
       </div>
     </main>
@@ -93,6 +101,24 @@ export default {
         }
       });
     },
+
+    formatTimestamp(timestamp) {
+      if (!timestamp) return '';
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) return timestamp;
+      const now = new Date();
+      const isCurrentYear = now.getFullYear() === date.getFullYear();
+      const options = {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      };
+      if (!isCurrentYear) {
+        options.year = 'numeric';
+      }
+      return date.toLocaleString('en-US', options);
+    }
   },
   mounted() {
     this.fetchPosts();
@@ -144,5 +170,62 @@ export default {
 .emoji-section span {
   cursor: pointer;
   margin-right: 0.5rem;
+}
+
+.emoji-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.emoji-item {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 16px;
+  padding: 4px 10px;
+}
+
+.emoji {
+  font-size: 1.2rem;
+  margin-right: 4px;
+}
+
+.emoji-count {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.comments-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.comment-item {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.comment-author {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.comment-time {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.comment-text {
+  font-size: 0.95rem;
+  margin: 0;
 }
 </style>
