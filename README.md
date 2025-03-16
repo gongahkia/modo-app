@@ -6,7 +6,7 @@
 # `Modo` 🖌️
 
 <p align="center">
-<img src="./asset/logo/modo-no-background.png" width=50% height=50%>
+  <img src="./asset/logo/modo-no-background.png" width=50% height=50%>
 </p>
 
 Modo is a social media app for artists.
@@ -29,9 +29,11 @@ Modo is ***now live*** at [modo-live.netlify.app](https://modo-live.netlify.app/
 
 * Vue.js
 * Firebase
-* ...
+* ImgBB
 
 ## Architecture
+
+... refer to vince's documentation in the README.md and style this repo's README accordingly https://github.com/vincetyy/CS203-Kickoff
 
 ### DB
 
