@@ -85,6 +85,9 @@ export default {
       const commentsRef = ref(db, `posts/${postId}/comments`);
       const newCommentKey = push(commentsRef).key;
       const updates = {};
+      if this.newComment == "" {
+        return // ignore the empty comment 
+      }
       updates[`posts/${postId}/comments/${newCommentKey}`] = {
         authorId: auth.currentUser.uid, // Include the author ID as per the schema
         text: this.newComment,
