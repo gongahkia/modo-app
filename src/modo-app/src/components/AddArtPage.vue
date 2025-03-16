@@ -69,7 +69,8 @@ export default {
       
       this.isUploading = true;
       try {
-        const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
+        const imgbbApiKey = process.env.VUE_APP_IMGBB_API_KEY;
+        console.log("ImgBB API Key:", !!imgbbApiKey);
         
         if (!imgbbApiKey) {
           throw new Error("ImgBB API Key not configured");
@@ -102,6 +103,7 @@ export default {
         }
         
         const result = await response.json();
+        console.log("Response data:", result);
         
         if (result.success) {
           const postsRef = ref(db, "posts");
