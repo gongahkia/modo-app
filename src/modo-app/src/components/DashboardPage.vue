@@ -3,7 +3,7 @@
     <NavBar />
     <main>
       <!-- Carousel -->
-      <div :if="posts.length == 0" class="carousel">
+      <div v-if="posts.length == 0" class="carousel">
         <p>No posts found. Follow someone to get started.</p>
       </div>  
       <div v-for="post in posts" :key="post.id" class="carousel-item">
