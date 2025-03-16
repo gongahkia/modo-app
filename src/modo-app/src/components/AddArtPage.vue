@@ -63,37 +63,37 @@ export default {
       this.isUploading = true;
       
       try {
-        // Get ImgBB API key from environment variables
-        const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
+        // Get Imgur Client ID from environment variables
+        const imgurClientId = import.meta.env.VITE_IMGUR_CLIENT_ID;
         
-        if (!imgbbApiKey) {
-          throw new Error("ImgBB API Key not configured");
+        if (!imgurClientId) {
+          throw new Error("Imgur Client ID not configured");
         }
         
-        // Create form data for ImgBB upload
+        // Create form data for Imgur upload
         const formData = new FormData();
-        formData.append('image', this.selectedFile); // Direct file upload
+        formData.append('image', this.selectedFile);
+        formData.append('title', this.caption);
         
-        // Upload to ImgBB - note that the key is in the URL as a query parameter
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+        // Upload to Imgur
+        const response = await fetch('https://api.imgur.com/3/image', {
           method: 'POST',
+          headers: {
+            'Authorization': `Client-ID ${imgurClientId}`
+          },
           body: formData
         });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
         
         const result = await response.json();
         
         if (result.success) {
-          // Create post in database with ImgBB URL
+          // Create post in database with Imgur URL
           const postsRef = ref(db, "posts");
           const newPostRef = push(postsRef);
           
           await set(newPostRef, {
             authorId: auth.currentUser.uid,
-            imageUrl: result.data.display_url, // Use display_url for best quality
+            imageUrl: result.data.link, // Imgur image URL
             caption: this.caption,
             timestamp: new Date().toISOString(),
             comments: {},
@@ -103,7 +103,7 @@ export default {
           // Navigate back to dashboard
           this.$router.push('/dashboard');
         } else {
-          throw new Error(result.error?.message || "Upload failed");
+          throw new Error(result.data.error);
         }
       } catch (error) {
         console.error("Error uploading artwork:", error);
