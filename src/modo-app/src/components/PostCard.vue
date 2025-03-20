@@ -118,6 +118,7 @@
       },
       showUserProfile(userId) {
         if (userId) {
+          console.log(`User found with ID: ${userId}`);
           this.$emit('show-profile', userId);
         }
       }

@@ -4,9 +4,13 @@
 
 > [!IMPORTANT]
 >  
-> **Test Account Details**   
+> **Test Account 1 Details**   
 > Email: *garby2910@gmail.com*
 > Password: *2f7k"Y,b@#4kCB?*
+>
+> **Test Account 2 Details**   
+> Email: *petercegoh@gmail.com*
+> Password: *jjjjjjj*
 
 # `Modo` 🖌️
 

@@ -3,11 +3,11 @@
       <div class="profile-card">
         <div class="profile-header">
           <div class="profile-image-container">
-            <img :src="userData.profilePicture || defaultProfileImage" alt="Profile picture" class="profile-image" />
+            <img :src="userData.profilePic || defaultProfileImage" alt="Profile picture" class="profile-image" />
           </div>
           <div class="profile-info">
-            <h2 class="username">{{ userData.username || 'Anonymous' }}</h2>
-            <p class="user-id">ID: {{ userData.uid }}</p>
+            <h2 class="username">{{ userData.name || 'Anonymous' }}</h2>
+            <p class="user-id">ID: {{ userData.uniqueCode || 'Unknown ID' }}</p>
             <p class="join-date">Joined modo on {{ formatJoinDate(userData.createdAt) }}</p>
           </div>
           <button class="close-button" @click="closeProfile">×</button>
@@ -63,7 +63,8 @@
     props: {
       userId: {
         type: String,
-        required: true
+        required: true,
+        default: null,
       },
       isVisible: {
         type: Boolean,
@@ -130,6 +131,7 @@
         
         // Check if current user has blacklisted the profile user
         const blacklistRef = ref(db, `users/${auth.currentUser.uid}/blacklist/${this.userId}`);
+        console.log(blacklistRef);
         try {
           const snapshot = await get(blacklistRef);
           this.isBlacklisted = snapshot.exists();
@@ -165,6 +167,7 @@
         
         const currentUserUid = auth.currentUser.uid;
         const blacklistRef = ref(db, `users/${currentUserUid}/blacklist/${this.userId}`);
+        console.log(blacklistRef);
         
         try {
           if (this.isBlacklisted) {
@@ -197,9 +200,7 @@
       },
       async generateQRCode(uid) {
         if (!uid) return '';
-        
         try {
-          // Generate a QR code that contains the user ID or a profile link
           const url = `modo://user/${uid}`;
           return await QRCode.toDataURL(url);
         } catch (error) {

@@ -14,14 +14,15 @@
               :post="post" 
               :isSelected="selectedPost === post.id"
               @toggle-details="togglePostDetails"
-            />
-            <ProfileCard 
-              :userId="selectedUserId" 
-              :isVisible="isProfileVisible"
-              @close="closeUserProfile"
+              @show-profile="showUserProfile"
             />
           </div>
         </div>
+        <ProfileCard 
+          :userId="selectedUserId" 
+          :isVisible="isProfileVisible"
+          @close="closeUserProfile"
+        />
       </div>
     </main>
     
