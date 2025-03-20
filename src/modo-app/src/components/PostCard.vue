@@ -20,16 +20,18 @@
           </div>
         </div>
   
-        <p v-if="Object.keys(post.comments || {}).length === 0" class="no-comments">It's quiet here. Leave a comment!</p>
-        <ul class="comments-list">
-          <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
-            <div class="comment-header">
-              <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
-              <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
-            </div>
-            <p class="comment-text">{{ comment.text }}</p>
-          </li>
-        </ul>
+        <div class="comments-container" ref="commentsContainer">
+          <p v-if="Object.keys(post.comments || {}).length === 0" class="no-comments">It's quiet here. Leave a comment!</p>
+          <ul class="comments-list">
+            <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
+              <div class="comment-header">
+                <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
+                <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
+              </div>
+              <p class="comment-text">{{ comment.text }}</p>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </template>
@@ -63,22 +65,27 @@
       },
       addComment() {
         if (this.newComment === "") {
-          return; // ignore the empty comment 
+          return; 
         }
-        
         const commentsRef = ref(db, `posts/${this.post.id}/comments`);
         const newCommentKey = push(commentsRef).key;
         const updates = {};
-        
         updates[`posts/${this.post.id}/comments/${newCommentKey}`] = {
           authorId: auth.currentUser.uid,
           text: this.newComment,
           timestamp: new Date().toISOString(),
         };
-        
         update(ref(db), updates).then(() => {
-          this.newComment = ""; // Clear the input field after adding the comment
+          this.newComment = ""; 
+          this.$nextTick(() => {
+            this.scrollToLatestComment();
+          });
         });
+      }, 
+      scrollToLatestComment() {
+        if (this.$refs.commentsContainer) {
+          this.$refs.commentsContainer.scrollTop = this.$refs.commentsContainer.scrollHeight;
+        }
       },
       addEmoji(emoji) {
         const emojiRef = ref(db, `posts/${this.post.id}/emojis/${emoji}`);
@@ -106,6 +113,11 @@
           options.year = 'numeric';
         }
         return date.toLocaleString('en-US', options);
+      }
+    },
+    updated() {
+      if (this.isSelected && Object.keys(this.post.comments || {}).length > 0) {
+        this.scrollToLatestComment();
       }
     }
   };
@@ -228,10 +240,37 @@
   
   .comments-list {
     list-style-type: none;
-    padding: 0;
+    padding: 0.5rem;
     margin: 0;
   }
   
+  .comments-container {
+      max-height: 300px; 
+      overflow-y: auto; 
+      margin-top: 1rem;
+      padding-right: 0.5rem; 
+      border: 1px solid #eee;
+      border-radius: 0.25rem;
+    }
+
+    .comments-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .comments-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .comments-container::-webkit-scrollbar-thumb {
+      background: #a3d2ca;
+      border-radius: 3px;
+    }
+
+    .comments-container::-webkit-scrollbar-thumb:hover {
+      background: #71c0b2;
+    }
+
   .comment-item {
     margin-bottom: 12px;
     padding-bottom: 12px;
