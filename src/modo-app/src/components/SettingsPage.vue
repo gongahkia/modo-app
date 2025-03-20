@@ -51,38 +51,10 @@
               @change="handleProfileImageUpload" 
               accept="image/*" 
               class="mb-2"
-              ref="fileInput"
             >
           </div>
           <div v-if="isUploading" class="text-sm text-gray-500 mt-1">
             Uploading image...
-          </div>
-        </div>
-        
-        <!-- Image Cropper Modal -->
-        <div v-if="showCropper" class="cropper-modal">
-          <div class="cropper-container">
-            <h3 class="text-lg font-bold mb-4">Crop Your Profile Picture</h3>
-            <vue-cropper
-              ref="cropper"
-              :src="imageSource"
-              :aspectRatio="1"
-              :viewMode="1"
-              :dragMode="'move'"
-              :guides="true"
-              :background="true"
-              :rotatable="false"
-              :scalable="false"
-              :zoomable="true"
-              :movable="true"
-              :minCropBoxWidth="100"
-              :minCropBoxHeight="100"
-              class="cropper"
-            ></vue-cropper>
-            <div class="cropper-actions">
-              <button type="button" @click="cancelCrop" class="btn-red">Cancel</button>
-              <button type="button" @click="cropImage" class="btn">Crop & Save</button>
-            </div>
           </div>
         </div>
         
@@ -111,15 +83,12 @@ import { auth, db } from "@/firebase";
 import { ref, onValue, update, remove } from "firebase/database";
 import NavBar from "@/components/NavBar.vue";
 import QrcodeVue from 'qrcode.vue';
-import VueCropper from 'vue-cropperjs';
-import 'cropperjs/dist/cropper.css';
 
 export default {
   name: "SettingsPage",
   components: {
     NavBar,
     QrcodeVue,
-    VueCropper
   },
   data() {
     return {
@@ -136,9 +105,6 @@ export default {
       currentDisplayName: "", // Current display name from Firebase
       currentPhotoURL: "", // Current photo URL from Firebase
       isUploading: false, // Track if image is uploading
-      showCropper: false, // Show/hide cropper modal
-      imageSource: "", // Source for the cropper
-      croppedImageBlob: null, // Blob of the cropped image
     };
   },
   methods: {
@@ -175,48 +141,25 @@ export default {
       });
     },
     handleProfileImageUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      
-      // Check file size (e.g., 2MB limit)
-      const maxSize = 2 * 1024 * 1024; // 2MB
-      if (file.size > maxSize) {
-        this.showStatusMessage("File is too large. Maximum size is 2MB.", false);
-        this.$refs.fileInput.value = '';
-        return;
+      this.profileImageFile = event.target.files[0];
+      if (this.profileImageFile) {
+        // Check file size (e.g., 2MB limit)
+        const maxSize = 2 * 1024 * 1024; // 2MB
+        if (this.profileImageFile.size > maxSize) {
+          this.showStatusMessage("File is too large. Maximum size is 2MB.", false);
+          this.profileImageFile = null;
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = e => {
+          this.profileImagePreview = e.target.result;
+        };
+        reader.readAsDataURL(this.profileImageFile);
       }
-      
-      // Create a URL for the image
-      this.imageSource = URL.createObjectURL(file);
-      this.showCropper = true;
-    },
-    cancelCrop() {
-      this.showCropper = false;
-      this.imageSource = "";
-      this.$refs.fileInput.value = '';
-    },
-    cropImage() {
-      if (!this.$refs.cropper) return;
-      
-      // Get the cropped canvas
-      const canvas = this.$refs.cropper.getCroppedCanvas({
-        width: 300,
-        height: 300,
-        imageSmoothingEnabled: true,
-        imageSmoothingQuality: 'high'
-      });
-      
-      if (!canvas) return;
-      
-      // Convert canvas to blob
-      canvas.toBlob((blob) => {
-        this.croppedImageBlob = blob;
-        this.profileImagePreview = URL.createObjectURL(blob);
-        this.showCropper = false;
-      }, 'image/jpeg', 0.9);
     },
     async uploadProfileImage() {
-      if (!this.croppedImageBlob) return null;
+      if (!this.profileImageFile) return null;
       
       try {
         const imgbbApiKey = process.env.VUE_APP_IMGBB_API_KEY;
@@ -224,11 +167,12 @@ export default {
           throw new Error("ImgBB API Key not configured");
         }
         
-        // Convert blob to base64
-        const base64Image = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result.split(',')[1]);
-          reader.readAsDataURL(this.croppedImageBlob);
+        // Convert file to base64
+        const reader = new FileReader();
+        const base64Image = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(this.profileImageFile);
         });
         
         // Prepare form data for ImgBB
@@ -283,10 +227,10 @@ export default {
       try {
         const userUid = auth.currentUser.uid;
         const updates = {};
-        
+
         // Upload profile image if a new one is selected
         let profileImageUrl = null;
-        if (this.croppedImageBlob) {
+        if (this.profileImageFile) {
           profileImageUrl = await this.uploadProfileImage();
         }
 
@@ -297,14 +241,13 @@ export default {
           appearance: { theme: this.theme },
           notificationsEnabled: this.notificationsEnabled,
         };
-        
+
         await update(ref(db), updates);
         
         this.showStatusMessage("Settings updated successfully!", true);
         this.displayName = "";
-        this.croppedImageBlob = null;
+        this.profileImageFile = null;
         this.profileImagePreview = null;
-        this.$refs.fileInput.value = '';
       } catch (error) {
         console.error("Error updating settings:", error);
         this.showStatusMessage("Failed to update settings. Please try again.", false);
@@ -376,41 +319,5 @@ export default {
 .status-message.error {
   background-color: #f8d7da; /* Light red for error */
   color: #721c24; /* Dark red text */
-}
-
-/* Cropper modal styles */
-.cropper-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.cropper-container {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow: auto;
-}
-
-.cropper {
-  height: 400px;
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.cropper-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
 }
 </style>
