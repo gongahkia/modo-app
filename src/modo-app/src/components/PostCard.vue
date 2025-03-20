@@ -25,7 +25,9 @@
           <ul class="comments-list">
             <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
               <div class="comment-header">
-                <span class="comment-author">{{ comment.authorName || comment.authorId || 'Anonymous' }}</span>
+                <span class="comment-author" @click="showUserProfile(comment.authorId)">
+                  {{ comment.authorName || comment.authorId || 'Anonymous' }}
+                </span>
                 <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
               </div>
               <p class="comment-text">{{ comment.text }}</p>
@@ -113,6 +115,11 @@
           options.year = 'numeric';
         }
         return date.toLocaleString('en-US', options);
+      },
+      showUserProfile(userId) {
+        if (userId) {
+          this.$emit('show-profile', userId);
+        }
       }
     },
     updated() {

@@ -15,6 +15,11 @@
               :isSelected="selectedPost === post.id"
               @toggle-details="togglePostDetails"
             />
+            <ProfileCard 
+              :userId="selectedUserId" 
+              :isVisible="isProfileVisible"
+              @close="closeUserProfile"
+            />
           </div>
         </div>
       </div>
@@ -32,17 +37,21 @@ import { ref, onValue } from "firebase/database";
 import { db } from "@/firebase";
 import NavBar from "@/components/NavBar.vue";
 import PostCard from "@/components/PostCard.vue";
+import ProfileCard from "./ProfileCard.vue";
 
 export default {
   name: "DashboardPage", 
   components: {
     NavBar,
-    PostCard
+    PostCard,
+    ProfileCard
   },
   data() {
     return {
       posts: [],
       selectedPost: null,
+      selectedUserId: null,
+      isProfileVisible: false
     };
   },
   methods: {
@@ -62,6 +71,13 @@ export default {
       } else {
         this.selectedPost = postId;
       }
+    },
+    showUserProfile(userId) {
+      this.selectedUserId = userId;
+      this.isProfileVisible = true;
+    },
+    closeUserProfile() {
+      this.isProfileVisible = false;
     }
   },
   mounted() {

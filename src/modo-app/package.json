@@ -13,6 +13,7 @@
     "cropperjs": "^2.0.0",
     "firebase": "^11.4.0",
     "postcss": "^8.5.3",
+    "qrcode": "^1.5.4",
     "qrcode.vue": "^3.6.0",
     "qrcodejs": "^1.0.0",
     "tailwindcss": "^4.0.14",
