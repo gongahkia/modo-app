@@ -1,6 +1,8 @@
 <template>
   <div class="min-h-screen bg-pastel">
+
     <NavBar />
+
     <!-- Unique Code & QR Code -->
     <section class="p-4">
       <h2 class="text-xl font-bold">Your Unique Code:</h2>
@@ -8,6 +10,12 @@
       <div class="mt-4" v-if="uniqueCode">
         <qrcode-vue :value="uniqueCode" :size="180" level="H" />
       </div>
+    </section>
+
+    <!-- Join Date -->
+    <section class="p-4">
+      <h2 class="text-xl font-bold">Account Info:</h2>
+      <p>Joined in {{ joinDate }}</p>
     </section>
 
     <!-- Blacklist Users -->
@@ -105,6 +113,7 @@ export default {
       currentDisplayName: "", // Current display name from Firebase
       currentPhotoURL: "", // Current photo URL from Firebase
       isUploading: false, // Track if image is uploading
+      joinDate: "Loading...", // Join date display
     };
   },
   methods: {
@@ -138,6 +147,11 @@ export default {
         this.notificationsEnabled = data.settings?.notificationsEnabled ?? true;
         this.currentDisplayName = data.name || "Anonymous";
         this.currentPhotoURL = data.profilePic || "";
+        if (data.createdAt) {
+          this.formatJoinDate(data.createdAt);
+        } else {
+          this.joinDate = "Unknown";
+        }
       });
     },
     handleProfileImageUpload(event) {
@@ -262,6 +276,15 @@ export default {
       setTimeout(() => {
         this.statusMessage = "";
       }, 3000);
+    },
+    formatJoinDate(createdAtIso) {
+      try {
+        const date = new Date(createdAtIso);
+        this.joinDate = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      } catch (error) {
+        console.error("Error formatting join date:", error);
+        this.joinDate = "Unknown";
+      }
     },
   },
   mounted() {
