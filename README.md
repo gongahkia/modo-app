@@ -2,6 +2,11 @@
 ![](https://img.shields.io/badge/modo_2.0.0-build-orange)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/bfe2c10c-d1de-4f3b-b623-82f3872bc1ed/deploy-status)](https://app.netlify.com/sites/modo-live/deploys)
 
+> [!IMPORTANT]
+>  
+> **Test Account Details**   
+> Email: *garby2910@gmail.com*
+> Password: *2f7k"Y,b@#4kCB?*
 
 # `Modo` 🖌️
 
