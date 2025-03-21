@@ -8,14 +8,13 @@
           <div class="profile-info">
             <h2 class="username">{{ userData.name || 'Anonymous' }}</h2>
             <p class="user-id">ID: {{ userData.uniqueCode || 'Unknown ID' }}</p>
-            <p class="join-date">Joined modo on {{ formatJoinDate(userData.createdAt) }}</p>
+            <p class="join-date">Joined Modo on {{ formatJoinDate(userData.createdAt) }}</p>
           </div>
           <button class="close-button" @click="closeProfile">×</button>
         </div>
         
         <div class="qr-code-container">
           <qrcode-vue :value="userData.uid" :size="150" level="H" alt="User QR Code" />
-          <p class="qr-label">Scan to connect</p>
         </div>
         
         <div class="action-buttons">

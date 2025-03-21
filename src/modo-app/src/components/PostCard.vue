@@ -73,6 +73,7 @@
         const newCommentKey = push(commentsRef).key;
         const updates = {};
         updates[`posts/${this.post.id}/comments/${newCommentKey}`] = {
+          authorName: auth.currentUser.displayName,
           authorId: auth.currentUser.uid,
           text: this.newComment,
           timestamp: new Date().toISOString(),
