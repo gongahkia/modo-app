@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { ref, push, set } from "firebase/database";
+import { ref, push, set, get } from "firebase/database";
 import { auth, db } from "@/firebase";
 import NavBar from "@/components/NavBar.vue";
 
@@ -90,9 +90,6 @@ export default {
         formData.append('image', base64Image);
         formData.append('name', this.selectedFile.name);
         
-        // Optional: set expiration (in seconds, e.g., 600 for 10 minutes)
-        // formData.append('expiration', '600');
-        
         const response = await fetch('https://api.imgbb.com/1/upload', {
           method: 'POST',
           body: formData
@@ -106,16 +103,35 @@ export default {
         console.log("Response data:", result);
         
         if (result.success) {
+          // Get the current user's name from the database
+          let authorName = "Anonymous User Name";
+          const currentUserId = auth.currentUser.uid;
+          const userRef = ref(db, `users/${currentUserId}`);
+          
+          try {
+            const snapshot = await get(userRef);
+            if (snapshot.exists()) {
+              const userData = snapshot.val();
+              authorName = userData.name || "Anonymous User Name";
+            }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+          }
+          
+          // Create the new post
           const postsRef = ref(db, "posts");
           const newPostRef = push(postsRef);
+          
           await set(newPostRef, {
-            authorId: auth.currentUser.uid,
+            authorId: currentUserId,
+            authorName: authorName,
             imageUrl: result.data.url, 
             caption: this.caption,
             timestamp: new Date().toISOString(),
             comments: {},
             emojis: {}
           });
+          
           this.$router.push('/dashboard');
         } else {
           throw new Error("Failed to upload image to ImgBB");
@@ -127,7 +143,6 @@ export default {
         this.isUploading = false;
       }
     }
-
 
   }
 };

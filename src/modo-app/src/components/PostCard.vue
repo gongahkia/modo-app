@@ -1,9 +1,18 @@
 <template>
     <div class="post-container">
+
       <div class="image-wrapper">
         <img class="post-image" :src="post.imageUrl" alt="" @click="togglePostDetails" />
       </div>
+
       <p class="caption">{{ post.caption }}</p> 
+
+      <span class="author-name" @click="showUserProfile(post.authorId)">
+        {{ post.authorName || 'Anonymous User name' }}
+        <br>
+        <br>
+        <span class="author-id">{{ post.authorId || 'Anonymous User ID' }}</span>
+      </span>
     
       <div v-if="isSelected" class="post-details">
 
@@ -178,6 +187,25 @@
     text-align: center;
     color: #555;
     width: 100%;
+  }
+
+  .author-name {
+    margin: 0.5rem 0 1rem;
+    font-size: 1rem;
+    text-align: center;
+    color: #555;
+    width: 100%;
+    font-weight: bold;
+  }
+
+  .author-id {
+    margin: 0.5rem 0 1rem;
+    font-size: 1rem;
+    font-style: italic;
+    text-align: center;
+    color: #555;
+    width: 100%;
+    font-weight: normal;
   }
   
   .post-details {
