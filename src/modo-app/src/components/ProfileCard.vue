@@ -14,7 +14,7 @@
         </div>
         
         <div class="qr-code-container">
-          <img :src="generateQRCode(userData.uid)" alt="User QR Code" class="qr-code" />
+          <qrcode-vue :value="userData.uid" :size="150" level="H" alt="User QR Code" />
           <p class="qr-label">Scan to connect</p>
         </div>
         
@@ -56,10 +56,13 @@
   <script>
   import { ref, update, get } from "firebase/database";
   import { auth, db } from "@/firebase";
-  import QRCode from 'qrcode';
+  import QrcodeVue from 'qrcode.vue';
   
   export default {
     name: "ProfileCard",
+    components: {
+      QrcodeVue,
+    },
     props: {
       userId: {
         type: String,
@@ -77,7 +80,6 @@
         isFollowing: false,
         isBlacklisted: false,
         defaultProfileImage: "https://via.placeholder.com/150?text=User",
-        qrCodeUrl: ""
       };
     },
     watch: {
@@ -198,16 +200,6 @@
           day: 'numeric'
         });
       },
-      async generateQRCode(uid) {
-        if (!uid) return '';
-        try {
-          const url = `modo://user/${uid}`;
-          return await QRCode.toDataURL(url);
-        } catch (error) {
-          console.error("Error generating QR code:", error);
-          return '';
-        }
-      }
     }
   };
   </script>
