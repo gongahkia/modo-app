@@ -36,15 +36,11 @@
         
         <div class="user-stats">
           <div class="stat-item">
-            <span class="stat-value">{{ userData.postCount || 0 }}</span>
-            <span class="stat-label">Posts</span>
-          </div>
-          <div class="stat-item">
             <span class="stat-value">{{ userData.followersCount || 0 }}</span>
             <span class="stat-label">Followers</span>
           </div>
           <div class="stat-item">
-            <span class="stat-value">{{ userData.followingCount || 0 }}</span>
+            <span class="stat-value">{{ userData.following ? Object.keys(userData.following).length : 0 }}</span>
             <span class="stat-label">Following</span>
           </div>
         </div>
