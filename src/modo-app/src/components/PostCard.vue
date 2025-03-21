@@ -6,6 +6,7 @@
       <p class="caption">{{ post.caption }}</p> 
     
       <div v-if="isSelected" class="post-details">
+
         <textarea v-model="newComment" placeholder="Add a comment..." class="input"></textarea>
         <button @click="addComment" class="btn">Add Comment</button>
   
@@ -27,9 +28,9 @@
               <div class="comment-header">
                 <span class="comment-author-name" @click="showUserProfile(comment.authorId)">
                   {{ comment.authorName || 'Anonymous User name' }}
-                </span>
-                <span class="comment-author-id" @click="showUserProfile(comment.authorId)">
-                  {{ comment.authorId || 'Anonymous User ID' }}
+                    <span class="comment-author-id">
+                      {{ comment.authorId || 'Anonymous User ID' }}
+                    </span>
                 </span>
                 <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
               </div>
@@ -308,6 +309,7 @@
   }
   
   .comment-author-id {
+    font-weight: normal;
     font-style: italic;
     font-size: 0.8rem;
   }
