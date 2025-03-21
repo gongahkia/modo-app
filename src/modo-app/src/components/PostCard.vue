@@ -25,8 +25,11 @@
           <ul class="comments-list">
             <li v-for="comment in Object.values(post.comments || {})" :key="comment.timestamp" class="comment-item">
               <div class="comment-header">
-                <span class="comment-author" @click="showUserProfile(comment.authorId)">
-                  {{ comment.authorName || comment.authorId || 'Anonymous' }}
+                <span class="comment-author-name" @click="showUserProfile(comment.authorId)">
+                  {{ comment.authorName || 'Anonymous User name' }}
+                </span>
+                <span class="comment-author-id" @click="showUserProfile(comment.authorId)">
+                  {{ comment.authorId || 'Anonymous User ID' }}
                 </span>
                 <span class="comment-time">{{ formatTimestamp(comment.timestamp) }}</span>
               </div>
@@ -299,11 +302,16 @@
     margin-bottom: 4px;
   }
   
-  .comment-author {
+  .comment-author-name {
     font-weight: bold;
     font-size: 0.9rem;
   }
   
+  .comment-author-id {
+    font-style: italic;
+    font-size: 0.8rem;
+  }
+
   .comment-time {
     font-size: 0.8rem;
     color: #666;
