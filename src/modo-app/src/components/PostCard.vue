@@ -39,7 +39,7 @@
   </template>
   
   <script>
-  import { ref, update, push } from "firebase/database";
+  import { ref, update, push, get } from "firebase/database";
   import { onValue } from "firebase/database";
   import { auth, db } from "@/firebase";
   
@@ -69,20 +69,27 @@
         if (this.newComment === "") {
           return; 
         }
-        const commentsRef = ref(db, `posts/${this.post.id}/comments`);
-        const newCommentKey = push(commentsRef).key;
-        const updates = {};
-        updates[`posts/${this.post.id}/comments/${newCommentKey}`] = {
-          authorName: auth.currentUser.displayName,
-          authorId: auth.currentUser.uid,
-          text: this.newComment,
-          timestamp: new Date().toISOString(),
-        };
-        update(ref(db), updates).then(() => {
-          this.newComment = ""; 
-          this.$nextTick(() => {
-            this.scrollToLatestComment();
+        const userRef = ref(db, `users/${auth.currentUser.uid}`);
+        get(userRef).then((snapshot) => {
+          const userData = snapshot.val();
+          const userName = userData.name; 
+          const commentsRef = ref(db, `posts/${this.post.id}/comments`);
+          const newCommentKey = push(commentsRef).key;
+          const updates = {};
+          updates[`posts/${this.post.id}/comments/${newCommentKey}`] = {
+            authorId: auth.currentUser.uid,
+            authorName: userName, 
+            text: this.newComment,
+            timestamp: new Date().toISOString(),
+          };
+          update(ref(db), updates).then(() => {
+            this.newComment = ""; 
+            this.$nextTick(() => {
+              this.scrollToLatestComment();
+            });
           });
+        }).catch((error) => {
+          console.error("Error fetching user data:", error);
         });
       }, 
       scrollToLatestComment() {
