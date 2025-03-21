@@ -10,8 +10,9 @@
       <span class="author-name" @click="showUserProfile(post.authorId)">
         {{ post.authorName || 'Anonymous User name' }}
         <br>
-        <br>
         <span class="author-id">{{ post.authorId || 'Anonymous User ID' }}</span>
+        <br>
+        <span class="post-time">{{ formatTimestamp(post.timestamp) }}</span>
       </span>
     
       <div v-if="isSelected" class="post-details">
@@ -183,7 +184,7 @@
   
   .caption {
     margin: 0.5rem 0 1rem;
-    font-size: 1rem;
+    font-size: 1.2rem;
     text-align: center;
     color: #555;
     width: 100%;
@@ -201,6 +202,16 @@
   .author-id {
     margin: 0.5rem 0 1rem;
     font-size: 1rem;
+    font-style: italic;
+    text-align: center;
+    color: #555;
+    width: 100%;
+    font-weight: normal;
+  }
+
+  .post-time {
+    margin: 0.5rem 0 1rem;
+    font-size: 0.9rem;
     font-style: italic;
     text-align: center;
     color: #555;
