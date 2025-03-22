@@ -66,7 +66,7 @@
               {{ user.uid || "Unknown ID" }}
             </span>
           </span> 
-          <button @click="removeFromBlacklist(user.uid)" class="btn-red">Remove</button>
+          <button @click="removeFromBlacklist(user.uid)" class="btn-red">Unblacklist</button>
         </li>
       </ul>
     </section>
@@ -461,12 +461,12 @@ export default {
 
 .user-displayName {
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .user-id {
   font-weight: normal;
   font-style: italic;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
 }
 </style>
