@@ -17,7 +17,7 @@
           <qrcode-vue :value="userData.uid" :size="150" level="H" alt="User QR Code" />
         </div>
         
-        <div class="action-buttons">
+        <div class="action-buttons" v-if="!isOwnProfile">
           <button 
             class="action-btn follow-btn" 
             :class="{ 'following': isFollowing }"
@@ -83,14 +83,18 @@
         handler(newUserId) {
           if (newUserId && this.isVisible) {
             this.fetchUserData();
-            this.checkRelationshipStatus();
+            if (!this.isOwnProfile){
+              this.checkRelationshipStatus();
+            }
           }
         }
       },
       isVisible(newValue) {
         if (newValue && this.userId) {
           this.fetchUserData();
-          this.checkRelationshipStatus();
+          if (!this.isOwnProfile){
+            this.checkRelationshipStatus();
+          }
         }
       }
     },
@@ -195,7 +199,12 @@
           day: 'numeric'
         });
       },
-    }
+    },
+    computed: {
+      isOwnProfile() {
+        return auth.currentUser && auth.currentUser.uid === this.userId;
+      }
+    },
   };
   </script>
   
