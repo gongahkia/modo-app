@@ -38,7 +38,7 @@
       <p v-if="followers.length === 0">No followers found.</p>
       <ul>
         <li v-for="follower in followers" :key="follower.uid">
-          {{ follower.name }} ({{ follower.email }})
+          {{ follower.uid }}
           <button @click="removeFromFollowers(follower.uid)" class="btn-red">Remove</button>
         </li>
       </ul>
