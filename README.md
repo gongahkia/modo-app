@@ -5,12 +5,12 @@
 > [!IMPORTANT]
 >  
 > **Test Account 1 Details**   
-> Email: *garby2910@gmail.com*
-> Password: *2f7k"Y,b@#4kCB?*
->
+> Email: *garby2910@gmail.com*  
+> Password: *2f7k"Y,b@#4kCB?*  
+>  
 > **Test Account 2 Details**   
-> Email: *petercegoh@gmail.com*
-> Password: *jjjjjjj*
+> Email: *petercegoh@gmail.com*  
+> Password: *jjjjjjj*  
 
 # `Modo` 🖌️
 
@@ -37,12 +37,12 @@ Modo is ***now live*** at [modo-live.netlify.app](https://modo-live.netlify.app/
 ## Stack
 
 * Vue.js
-* Firebase
+* Firebase Realtime Database
 * ImgBB
 
 ## Architecture
 
-... refer to vince's documentation in the README.md and style this repo's README accordingly https://github.com/vincetyy/CS203-Kickoff
+... Refer to vince's documentation in the README.md and style this repo's README accordingly https://github.com/vincetyy/CS203-Kickoff
 
 ### DB
 
@@ -92,18 +92,6 @@ Firebase Realtime Database currently follows the below schema.
         }
       }
     }
-  },
-  "artLimits": { // tracks how many posts a user has created in a week to enforce the 3-post-per-week limit
-    "userId": {
-      "weekStartTimestamp": { // timestamp of the start of the week
-        "count": 3 // number of posts created this week
-      }
-    }
-  },
-  "qrCodesToUsersMap": { // maps unique QR codes to user IDs for adding friends
-    "uniqueCodeString1234567890abcdefg12345": { // generated QR code string (hashed or UUID)
-      "userId": true
-    }
   }
 }
 ```
@@ -111,11 +99,12 @@ Firebase Realtime Database currently follows the below schema.
 ### Overview
 
 ```mermaid
+...
 ```
 
 ## License
 
-...
+... Refer to license Vince and Zeming put on their projects and model those
 
 ## Reference
 

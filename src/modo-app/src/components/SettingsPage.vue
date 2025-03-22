@@ -25,7 +25,7 @@
       <p v-if="followedUsers.length === 0">No users are currently followed.</p>
       <ul>
         <li v-for="user in followedUsers" :key="user.uid">
-          {{ user.uid }}
+          {{ userNames[user.uid] || user.uid }}
           <button @click="removeFromFollowing(user.uid)" class="btn-red">Unfollow</button>
         </li>
       </ul>
@@ -38,7 +38,7 @@
       <p v-if="followers.length === 0">No followers found.</p>
       <ul>
         <li v-for="follower in followers" :key="follower.uid">
-          {{ follower.uid }}
+          {{ userNames[follower.uid] || follower.uid }}
           <button @click="removeFromFollowers(follower.uid)" class="btn-red">Remove</button>
         </li>
       </ul>
@@ -50,7 +50,7 @@
       <p v-if="blacklistedUsers.length === 0">No users are currently blacklisted.</p>
       <ul>
         <li v-for="user in blacklistedUsers" :key="user.uid">
-          {{ user.uid }}
+          {{ userNames[user.uid] || user.uid }}
           <button @click="removeFromBlacklist(user.uid)" class="btn-red">Remove</button>
         </li>
       </ul>
@@ -106,7 +106,7 @@
 
 <script>
 import { auth, db } from "@/firebase";
-import { ref, onValue, update, remove } from "firebase/database";
+import { ref, onValue, update, remove, get, getDatabase } from "firebase/database";
 import NavBar from "@/components/NavBar.vue";
 import QrcodeVue from 'qrcode.vue';
 
@@ -133,6 +133,7 @@ export default {
       currentPhotoURL: "", // Current photo URL from Firebase
       isUploading: false, // Track if image is uploading
       joinDate: "Loading...", // Join date display
+      userNames: {} // Cache for user names to avoid repeated lookups
     };
   },
   methods: {
@@ -152,6 +153,7 @@ export default {
           uid: key,
           ...data[key],
         }));
+        this.fetchUserNames();
       });
     },
     fetchFollowers() {
@@ -163,6 +165,7 @@ export default {
           uid: key,
           ...data[key],
         }));
+        this.fetchUserNames();
       });
     },
     fetchBlacklistedUsers() {
@@ -174,16 +177,14 @@ export default {
           uid: key,
           ...data[key],
         }));
+        this.fetchUserNames();
       });
     },
     fetchSettings() {
       const userUid = auth.currentUser.uid;
       const settingsRef = ref(db, `users/${userUid}`);
-      
       onValue(settingsRef, (snapshot) => {
         const data = snapshot.val() || {};
-        
-        // Retrieve settings and current values
         this.notificationsEnabled = data.settings?.notificationsEnabled ?? true;
         this.currentDisplayName = data.name || "Anonymous";
         this.currentPhotoURL = data.profilePic || "";
@@ -349,6 +350,38 @@ export default {
       } catch (error) {
         console.error("Error formatting join date:", error);
         this.joinDate = "Unknown";
+      }
+    },
+    async getUserName(uid) {
+      if (this.userNames[uid]) {
+        return this.userNames[uid];
+      }
+      try {
+        const db = getDatabase();
+        const userRef = ref(db, `users/${uid}`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          this.userNames[uid] = userData.name;
+          return userData.name;
+        } else {
+          console.log(`No user found with ID: ${uid}`);
+          return uid; 
+        }
+      } catch (error) {
+        console.error("Error fetching user name:", error);
+        return uid; 
+      }
+    },
+    async fetchUserNames() {
+      for (const user of this.followedUsers) {
+        await this.getUserName(user.uid);
+      }
+      for (const follower of this.followers) {
+        await this.getUserName(follower.uid);
+      }
+      for (const user of this.blacklistedUsers) {
+        await this.getUserName(user.uid);
       }
     },
   },
