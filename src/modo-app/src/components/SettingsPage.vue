@@ -256,6 +256,19 @@ export default {
         return null;
       }
     },
+    removeFromFollowing(followedUid) {
+      const userUid = auth.currentUser.uid;
+      const followingRef = ref(db, `users/${userUid}/following/${followedUid}`);
+      
+      remove(followingRef)
+        .then(() => {
+          this.fetchFollowedUsers(); // Refresh the list
+          this.showStatusMessage("User removed from following successfully!", true);
+        })
+        .catch(() => {
+          this.showStatusMessage("Failed to remove user from following.", false);
+        });
+    },
     removeFromBlacklist(blacklistedUid) {
       const userUid = auth.currentUser.uid;
       const blacklistRef = ref(db, `users/${userUid}/blacklist/${blacklistedUid}`);
@@ -329,6 +342,8 @@ export default {
     if (auth.currentUser) {
       this.fetchUniqueCode();
       this.fetchBlacklistedUsers();
+      this.fetchFollowedUsers();
+      this.fetchFollowers();
       this.fetchSettings();
     } else {
       this.$router.push('/login');
