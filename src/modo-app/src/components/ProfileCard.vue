@@ -36,7 +36,7 @@
         
         <div class="user-stats">
           <div class="stat-item">
-            <span class="stat-value">{{ userData.followersCount || 0 }}</span>
+            <span class="stat-value">{{ userData.followers ? Object.keys(userData.followers).length : 0 }}</span>
             <span class="stat-label">Followers</span>
           </div>
           <div class="stat-item">
