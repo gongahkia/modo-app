@@ -18,6 +18,31 @@
       <p>Joined in {{ joinDate }}</p>
     </section>
 
+    <!-- Followed Users -->
+
+    <section class="p-4">
+      <h2 class="text-xl font-bold">Followed Users:</h2>
+      <p v-if="followedUsers.length === 0">No users are currently followed.</p>
+      <ul>
+        <li v-for="user in followedUsers" :key="user.uid">
+          {{ user.name }} ({{ user.email }})
+          <button @click="removeFromFollowing(user.uid)" class="btn-red">Unfollow</button>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Followers -->
+
+    <section class="p-4">
+      <h2 class="text-xl font-bold">Followers:</h2>
+      <p v-if="followers.length === 0">No followers found.</p>
+      <ul>
+        <li v-for="follower in followers" :key="follower.uid">
+          {{ follower.name }} ({{ follower.email }})
+        </li>
+      </ul>
+    </section>
+
     <!-- Blacklist Users -->
     <section class="p-4">
       <h2 class="text-xl font-bold">Blacklisted Users:</h2>
@@ -93,6 +118,8 @@ export default {
   data() {
     return {
       uniqueCode: "",
+      followedUsers: [],
+      followers: [],
       blacklistedUsers: [],
       displayName: "",
       profileImageFile: null,
@@ -113,6 +140,28 @@ export default {
       const userRef = ref(db, `users/${userUid}/uniqueCode`);
       onValue(userRef, (snapshot) => {
         this.uniqueCode = snapshot.val();
+      });
+    },
+    fetchFollowedUsers() {
+      const userUid = auth.currentUser.uid;
+      const followedRef = ref(db, `users/${userUid}/following`);
+      onValue(followedRef, (snapshot) => {        
+        const data = snapshot.val() || {};
+        this.followedUsers = Object.keys(data).map((key) => ({
+          uid: key,
+          ...data[key],
+        }));
+      });
+    },
+    fetchFollowers() {
+      const userUid = auth.currentUser.uid;
+      const followersRef = ref(db, `users/${userUid}/followers`);
+      onValue(followersRef, (snapshot) => {
+        const data = snapshot.val() || {};
+        this.followers = Object.keys(data).map((key) => ({
+          uid: key,
+          ...data[key],
+        }));
       });
     },
     fetchBlacklistedUsers() {
