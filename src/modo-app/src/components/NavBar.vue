@@ -1,19 +1,24 @@
 <template>
-  <nav class="bg-white shadow p-4 flex justify-between items-center">
 
-    <h1 class="text-2xl font-bold mb-4">MODO</h1> 
-    <!-- Navigation Links -->
-    <div class="flex space-x-4 mb-4">
+  <nav class="bg-white shadow p-4 flex flex-col items-center">
+
+    <!-- MODO text at the top -->
+    <h1 class="text-2xl font-bold mb-4">MODO</h1>
+    
+    <!-- Centralized Navigation Links -->
+    <div class="flex justify-center space-x-4 w-full">
       <button @click="$router.push('/dashboard')" class="btn">Dashboard</button>
       <button @click="$router.push('/settings')" class="btn">Settings</button>
       <button @click="logout" class="btn-red">Logout</button>
     </div>
 
     <!-- Status Message -->
-    <div v-if="statusMessage" class="status-message" :class="{ success: isSuccess, error: !isSuccess }">
+    <div v-if="statusMessage" class="status-message mt-4" :class="{ success: isSuccess, error: !isSuccess }">
       {{ statusMessage }}
     </div>
+
   </nav>
+
 </template>
 
 <script>
