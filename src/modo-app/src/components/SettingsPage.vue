@@ -25,7 +25,12 @@
       <p v-if="followedUsers.length === 0">No users are currently followed.</p>
       <ul>
         <li v-for="user in followedUsers" :key="user.uid">
-          {{ userNames[user.uid] || user.uid }}
+          <span class="user-displayName">
+            {{ userNames[user.uid] || "Anonymous User" }}
+            <span class="user-id">
+              {{ user.uid || "Unknown ID" }}
+            </span>
+          </span>
           <button @click="removeFromFollowing(user.uid)" class="btn-red">Unfollow</button>
         </li>
       </ul>
@@ -38,7 +43,12 @@
       <p v-if="followers.length === 0">No followers found.</p>
       <ul>
         <li v-for="follower in followers" :key="follower.uid">
-          {{ userNames[follower.uid] || follower.uid }}
+          <span class="user-displayName">
+            {{ userNames[follower.uid] || "Anonymous User" }}
+            <span class="user-id">
+              {{ follower.uid || "Unknown ID" }}
+            </span>
+          </span> 
           <button @click="removeFromFollowers(follower.uid)" class="btn-red">Remove</button>
         </li>
       </ul>
@@ -50,7 +60,12 @@
       <p v-if="blacklistedUsers.length === 0">No users are currently blacklisted.</p>
       <ul>
         <li v-for="user in blacklistedUsers" :key="user.uid">
-          {{ userNames[user.uid] || user.uid }}
+          <span class="user-displayName">
+            {{ userNames[user.uid] || "Anonymous User" }}
+            <span class="user-id">
+              {{ user.uid || "Unknown ID" }}
+            </span>
+          </span> 
           <button @click="removeFromBlacklist(user.uid)" class="btn-red">Remove</button>
         </li>
       </ul>
@@ -442,5 +457,16 @@ export default {
 .status-message.error {
   background-color: #f8d7da; /* Light red for error */
   color: #721c24; /* Dark red text */
+}
+
+.user-displayName {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.user-id {
+  font-weight: normal;
+  font-style: italic;
+  font-size: 0.8rem;
 }
 </style>
