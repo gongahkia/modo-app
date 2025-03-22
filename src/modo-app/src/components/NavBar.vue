@@ -1,7 +1,9 @@
 <template>
   <nav class="bg-white shadow p-4 flex justify-between items-center">
+
+    <h1 class="text-2xl font-bold mb-4">MODO</h1> 
     <!-- Navigation Links -->
-    <div class="flex space-x-4">
+    <div class="flex space-x-4 mb-4">
       <button @click="$router.push('/dashboard')" class="btn">Dashboard</button>
       <button @click="$router.push('/settings')" class="btn">Settings</button>
       <button @click="logout" class="btn-red">Logout</button>
