@@ -28,10 +28,6 @@
             <input v-model="registerForm.password" type="password" placeholder="Password" class="input" required />
             <input v-model="registerForm.confirmPassword" type="password" placeholder="Confirm Password" class="input" required />
             <input v-model="registerForm.name" type="text" placeholder="Your Name" class="input" required />
-            <select v-model="registerForm.themePreference" class="input">
-              <option value="light">Light Theme</option>
-              <option value="dark">Dark Theme</option>
-            </select>
             <label class="block mt-2">
               <input type="checkbox" v-model="registerForm.notificationsEnabled" /> Enable Notifications
             </label>
@@ -235,7 +231,6 @@ export default {
         confirmPassword: "",
         name: "",
         profilePicUrl: "",
-        themePreference: "light",
         notificationsEnabled: true
       },
       
@@ -293,7 +288,6 @@ export default {
           following: {},
           blacklist: {},
           settings: {
-            appearance: { theme: this.registerForm.themePreference },
             notificationsEnabled: this.registerForm.notificationsEnabled,
           },
           createdAt: new Date().toISOString(),

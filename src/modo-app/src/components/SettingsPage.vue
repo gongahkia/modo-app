@@ -66,14 +66,6 @@
           </div>
         </div>
         
-        <div class="mb-4">
-          <label class="block mb-2">Theme</label>
-          <select v-model="theme" class="input">
-            <option value="light">Light Theme</option>
-            <option value="dark">Dark Theme</option>
-          </select>
-        </div>
-        
         <label class="block mt-2 mb-4">
           <input type="checkbox" v-model="notificationsEnabled" /> Enable Notifications
         </label>
@@ -106,7 +98,6 @@ export default {
       profileImageFile: null,
       profileImagePreview: null,
       photoURL: "",
-      theme: "light", // Default theme
       notificationsEnabled: true, // Default notifications setting
       statusMessage: "", // Holds the status/error message
       isSuccess: false, // Tracks whether the message indicates success or error
@@ -143,7 +134,6 @@ export default {
         const data = snapshot.val() || {};
         
         // Retrieve settings and current values
-        this.theme = data.settings?.appearance?.theme || "light";
         this.notificationsEnabled = data.settings?.notificationsEnabled ?? true;
         this.currentDisplayName = data.name || "Anonymous";
         this.currentPhotoURL = data.profilePic || "";
@@ -252,7 +242,6 @@ export default {
         if (profileImageUrl) updates[`users/${userUid}/profilePic`] = profileImageUrl;
 
         updates[`users/${userUid}/settings`] = {
-          appearance: { theme: this.theme },
           notificationsEnabled: this.notificationsEnabled,
         };
 
