@@ -21,7 +21,7 @@
     <!-- Followed Users -->
 
     <section class="p-4">
-      <h2 class="text-xl font-bold">Followed Users:</h2>
+      <h2 class="text-xl font-bold">Following:</h2>
       <p v-if="followedUsers.length === 0">No users are currently followed.</p>
       <ul>
         <li v-for="user in followedUsers" :key="user.uid">
@@ -39,6 +39,7 @@
       <ul>
         <li v-for="follower in followers" :key="follower.uid">
           {{ follower.name }} ({{ follower.email }})
+          <button @click="removeFromFollowers(follower.uid)" class="btn-red">Remove</button>
         </li>
       </ul>
     </section>
@@ -267,6 +268,19 @@ export default {
         })
         .catch(() => {
           this.showStatusMessage("Failed to remove user from following.", false);
+        });
+    },
+    removeFromFollowers(followerUid) {
+      const userUid = auth.currentUser.uid;
+      const followersRef = ref(db, `users/${userUid}/followers/${followerUid}`);
+      
+      remove(followersRef)
+        .then(() => {
+          this.fetchFollowers(); // Refresh the list
+          this.showStatusMessage("User removed from followers successfully!", true);
+        })
+        .catch(() => {
+          this.showStatusMessage("Failed to remove user from followers.", false);
         });
     },
     removeFromBlacklist(blacklistedUid) {
