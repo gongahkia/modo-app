@@ -25,7 +25,7 @@
       <p v-if="followedUsers.length === 0">No users are currently followed.</p>
       <ul>
         <li v-for="user in followedUsers" :key="user.uid">
-          {{ user.name }} ({{ user.email }})
+          {{ user.uid }}
           <button @click="removeFromFollowing(user.uid)" class="btn-red">Unfollow</button>
         </li>
       </ul>
@@ -50,7 +50,7 @@
       <p v-if="blacklistedUsers.length === 0">No users are currently blacklisted.</p>
       <ul>
         <li v-for="user in blacklistedUsers" :key="user.uid">
-          {{ user.name }} ({{ user.email }})
+          {{ user.uid }}
           <button @click="removeFromBlacklist(user.uid)" class="btn-red">Remove</button>
         </li>
       </ul>
