@@ -1,5 +1,6 @@
 <template>
   <div class="user-profile-page">
+    <Navbar />
     <div class="profile-container">
       <div class="profile-header">
         <div class="profile-image-container">
@@ -11,7 +12,6 @@
           <p class="join-date">Joined Modo on {{ formatJoinDate(userData.createdAt) }}</p>
           <p v-if="followsCurrentUser" class="follows-you">Follows you</p>
         </div>
-        <button class="back-button" @click="goBack">← Back</button>
       </div>
       
       <div class="qr-code-container">
@@ -47,6 +47,7 @@
 <script>
 import { ref, update, get } from "firebase/database";
 import { auth, db } from "@/firebase";
+import NavBar from "@/components/NavBar.vue";
 import QrcodeVue from 'qrcode.vue';
 
 export default {
@@ -76,9 +77,6 @@ export default {
     }
   },
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
     async fetchUserData() {
       if (!this.userid) return;
       
@@ -226,27 +224,6 @@ export default {
   font-size: 0.85rem;
   color: #888;
   margin: 0;
-}
-
-.back-button {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background: #f0f0f0;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 1.25rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.back-button:hover {
-  background: #e0e0e0;
 }
 
 .qr-code-container {
