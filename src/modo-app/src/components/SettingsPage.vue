@@ -7,8 +7,8 @@
     <section class="p-4">
       <h2 class="text-xl font-bold">Your Unique Code:</h2>
       <p>{{ uniqueCode }}</p>
-      <div class="mt-4" v-if="uniqueCode">
-        <qrcode-vue :value="uniqueCode" :size="180" level="H" />
+      <div class="mt-4" v-if="uniqueUrl">
+        <qrcode-vue :value="uniqueUrl" :size="180" level="H" />
       </div>
     </section>
 
@@ -117,6 +117,7 @@ export default {
   data() {
     return {
       uniqueCode: "",
+      uniqueUrl: "",
       followedUsers: [],
       followers: [],
       displayName: "",
@@ -140,6 +141,10 @@ export default {
       onValue(userRef, (snapshot) => {
         this.uniqueCode = snapshot.val();
       });
+    },
+    fetchUniqueUrl() {
+      const userUid = auth.currentUser.uid;
+      return `https://modo-live.netlify.app/dashboard/user/${userUid}`;
     },
     fetchFollowedUsers() {
       const userUid = auth.currentUser.uid;
@@ -357,6 +362,7 @@ export default {
   mounted() {
     if (auth.currentUser) {
       this.fetchUniqueCode();
+      this.fetchUniqueUrl();
       this.fetchFollowedUsers();
       this.fetchFollowers();
       this.fetchSettings();
