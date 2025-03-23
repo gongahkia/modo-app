@@ -217,6 +217,13 @@ export default {
       return auth.currentUser && auth.currentUser.uid === this.userid;
     }
   },
+  mounted() {
+    if (auth.currentUser) {
+      console.log(`User found with ID: ${this.userid}`);
+    } else {
+      this.$router.push('/');
+    }
+  },
 };
 </script>
 

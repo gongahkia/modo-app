@@ -361,7 +361,7 @@ export default {
       this.fetchFollowers();
       this.fetchSettings();
     } else {
-      this.$router.push('/login');
+      this.$router.push('/');
     }
   },
 };

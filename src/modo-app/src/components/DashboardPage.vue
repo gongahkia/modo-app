@@ -82,7 +82,12 @@ export default {
     }
   },
   mounted() {
-    this.fetchPosts();
+    if (auth.currentUser) {
+      console.log(`User found with ID: ${this.userid}`);
+      this.fetchPosts();
+    } else {
+      this.$router.push('/');
+    }
   },
 };
 </script>
