@@ -10,6 +10,8 @@
 
 Modo 2.0.0 is ***now live*** at [modo-live.netlify.app](https://modo-live.netlify.app/).
 
+Created as part of [The Modo Collective](https://github.com/modo-collective/).
+
 ## Stack
 
 * [Frontend](./src/modo-app/src/components/) *(Vue.js, Tailwind CSS, Netlify)*
