@@ -96,6 +96,10 @@ Firebase Realtime Database currently follows the below schema.
 ...
 ```
 
+### File-specific
+
+... Consider putting file-specific mermaid diagrams for how everythign works together
+
 ## License
 
 ... Refer to license Vince and Zeming put on their projects and model those
