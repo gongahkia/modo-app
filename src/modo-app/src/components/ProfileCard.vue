@@ -6,7 +6,12 @@
             <img :src="userData.profilePic || defaultProfileImage" alt="Profile picture" class="profile-image" />
           </div>
           <div class="profile-info">
-            <h2 class="username">{{ userData.name || 'Anonymous' }}</h2>
+            <div class="username-container">
+              <h2 class="username">{{ userData.name || 'Anonymous' }}</h2>
+              <router-link :to="`/dashboard/user/${userData.uid || userId}`" class="expand-icon">
+                <i class="fas fa-external-link-alt"></i>
+              </router-link>
+            </div>
             <p class="user-id">ID: {{ userData.uniqueCode || 'Unknown ID' }}</p>
             <p class="join-date">Joined Modo on {{ formatJoinDate(userData.createdAt) }}</p>
             <p v-if="followsCurrentUser" class="follows-you">Follows you</p>
@@ -98,12 +103,12 @@
       },
       async fetchUserData() {
         if (!this.userId) return;
-        
         const userRef = ref(db, `users/${this.userId}`);
         try {
           const snapshot = await get(userRef);
           if (snapshot.exists()) {
             this.userData = snapshot.val();
+            this.userData.uid = this.userId;
           } else {
             console.log("No user data available");
             this.userData = { uid: this.userId };
@@ -348,5 +353,22 @@
     color: #a3d2ca;
     margin: 0.25rem 0 0 0;
     font-weight: 500;
+  }
+
+  .username-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .expand-icon {
+    color: #a3d2ca;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .expand-icon:hover {
+    color: #71c0b2;
+    transform: scale(1.1);
   }
   </style>
