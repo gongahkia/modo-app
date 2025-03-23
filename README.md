@@ -54,43 +54,37 @@ Firebase Realtime Database currently follows the below schema.
     "userId": {
       "name": "string",
       "email": "string",
-      "profilePic": "url",
+      "profilePic": "string",
       "uniqueCode": "string", 
+      "createdAt": "string",
       "following": {
-        "followedUserId": true
+        "followedUserId": "boolean",
       },
-      "blacklist": {
-        "blacklistedUserId": {
-          "name": "string",
-          "email": "string"
-        }
+      "followers": {
+        "followerUserId": "boolean",
       },
       "settings": {
-        "appearance": {
-          "theme": "light" 
-        },
-        "notificationsEnabled": true
+        "notificationsEnabled": "boolean",
       },
-      "createdAt": "ISO8601"
     }
   },
   "posts": {
     "postId": {
-      "authorId": "userId",
-      "imageUrl": "url",
+      "authorId": "string",
+      "imageUrl": "string",
       "caption": "string", 
-      "timestamp": "ISO8601",
+      "timestamp": "string",
       "emojis": {
-        "emojiType1": ["userId"], 
-        "emojiType2": ["userId"]
+        "emojiType1": ["string"], 
+        "emojiType2": ["string"],
       },
       "comments": {
         "commentId": {
-          "authorId": "userId",
+          "authorId": "string",
           "text": "string",
-          "timestamp": "ISO8601"
+          "timestamp": "string",
         }
-      }
+      },
     }
   }
 }
