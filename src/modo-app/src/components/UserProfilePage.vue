@@ -18,7 +18,7 @@
       </div>
       
       <div class="qr-code-container">
-        <qrcode-vue :value="userData.uid" :size="150" level="H" alt="User QR Code" />
+        <qrcode-vue :value="uniqueUrl" :size="150" level="H" alt="User QR Code" />
       </div>
       
       <div class="action-buttons" v-if="!isOwnProfile">
@@ -90,6 +90,7 @@ export default {
       userPosts: [],
       postCount: 0,
       isAuthenticated: false,
+      uniqueUrl: "",
     };
   },
   created() {
@@ -219,6 +220,10 @@ export default {
     goToLogin() {
       this.$router.push('/');
     },
+    fetchUniqueUrl() {
+      const userUid = this.userid;
+      return `https://modo-live.netlify.app/dashboard/user/${userUid}`;
+    },
   },
   computed: {
     isOwnProfile() {
@@ -228,6 +233,7 @@ export default {
   mounted() {
     if (auth.currentUser) {
       console.log(`User found with ID: ${this.userid}`);
+      this.fetchUniqueUrl();
       this.isAuthenticated = true;
     } else {
       console.log("User not authenticated. Requesting login or registration.");
