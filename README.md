@@ -100,6 +100,10 @@ Firebase Realtime Database currently follows the below schema.
 
 ... Refer to license Vince and Zeming put on their projects and model those
 
+## Credits
+
+... Our thanks go especially to our beta-testers
+
 ## Reference
 
 The name `Modo` is in reference to [Modal Soul](https://en.wikipedia.org/wiki/Modal_Soul), the second album produced by legendary Japanese hip-hop artist 瀬葉 淳 (Jun Seba), better known by his stage name [Nujabes](https://en.wikipedia.org/wiki/Nujabes). 
