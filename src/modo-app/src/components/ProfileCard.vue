@@ -116,13 +116,15 @@
         if (!auth.currentUser || auth.currentUser.uid === this.userId) return;
         await Promise.all([
           this.checkIfFollowsCurrentUser(),
-          const followingRef = ref(db, `users/${auth.currentUser.uid}/following/${this.userId}`);
-          try {
-            const snapshot = await get(followingRef);
-            this.isFollowing = snapshot.exists();
-          } catch (error) {
-            console.error("Error checking following status:", error);
-          }
+          (async () => {
+            const followingRef = ref(db, `users/${auth.currentUser.uid}/following/${this.userId}`);
+            try {
+              const snapshot = await get(followingRef);
+              this.isFollowing = snapshot.exists();
+            } catch (error) {
+              console.error("Error checking following status:", error);
+            }
+        })()
         ]);
       },
       async toggleFollow() {
