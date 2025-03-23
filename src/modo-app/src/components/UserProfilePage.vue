@@ -60,8 +60,8 @@
 </template>
 
 <script>
-import { ref, update, get, query, orderByChild, equalTo } from "firebase/database";
 import { auth, db } from "@/firebase";
+import { ref, update, get, query, orderByChild, equalTo } from "firebase/database";
 import Navbar from "@/components/NavBar.vue";
 import QrcodeVue from 'qrcode.vue';
 

@@ -35,7 +35,7 @@
 
 <script>
 import { ref, onValue } from "firebase/database";
-import { db } from "@/firebase";
+import { auth, db } from "@/firebase";
 import NavBar from "@/components/NavBar.vue";
 import PostCard from "@/components/PostCard.vue";
 import ProfileCard from "./ProfileCard.vue";
