@@ -1,6 +1,9 @@
 <template>
   <div class="user-profile-page">
-    <Navbar />
+    <Navbar v-if="isAuthenticated" />
+    <div v-else class="login-button-container">
+      <button class="login-button" @click="goToLogin">Login / Register</button>
+    </div>
     <div class="profile-container">
       <div class="profile-header">
         <div class="profile-image-container">
@@ -85,10 +88,12 @@ export default {
       followsCurrentUser: false,
       loading: true,
       userPosts: [],
-      postCount: 0
+      postCount: 0,
+      isAuthenticated: false,
     };
   },
   created() {
+    this.isAuthenticated = !!auth.currentUser;
     this.fetchUserData();
     this.fetchUserPosts();
     if (!this.isOwnProfile) {
@@ -211,6 +216,9 @@ export default {
         console.error("Error checking if user follows current user:", error);
       }
     },
+    goToLogin() {
+      this.$router.push('/');
+    },
   },
   computed: {
     isOwnProfile() {
@@ -220,6 +228,7 @@ export default {
   mounted() {
     if (auth.currentUser) {
       console.log(`User found with ID: ${this.userid}`);
+      this.isAuthenticated = true;
     } else {
       this.$router.push('/');
     }
@@ -391,5 +400,29 @@ export default {
   margin-top: 2rem;
   padding: 1rem;
   border-top: 1px solid #eee;
+}
+
+.login-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-button {
+  background-color: #a3d2ca;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.login-button:hover {
+  background-color: #71c0b2;
 }
 </style>
