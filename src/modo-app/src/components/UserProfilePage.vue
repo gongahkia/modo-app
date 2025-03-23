@@ -37,23 +37,39 @@
           <span class="stat-value">{{ userData.following ? Object.keys(userData.following).length : 0 }}</span>
           <span class="stat-label">Following</span>
         </div>
+        <div class="stat-item">
+          <span class="stat-value">{{ postCount }}</span>
+          <span class="stat-label">Posts</span>
+        </div>
       </div>
 
-      <!-- You could add more sections here like user's posts/artwork -->
+      <!-- User's posts section -->
+      <div class="user-posts" v-if="userPosts.length > 0">
+        <h3 class="section-title">Recent Posts</h3>
+        <div class="posts-grid">
+          <div v-for="post in userPosts" :key="post.id" class="post-thumbnail">
+            <img :src="post.imageUrl" alt="Post" class="post-image" />
+          </div>
+        </div>
+      </div>
+      <div v-else-if="!loading" class="no-posts">
+        <p>No posts yet</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, update, get } from "firebase/database";
+import { ref, update, get, query, orderByChild, equalTo } from "firebase/database";
 import { auth, db } from "@/firebase";
-import NavBar from "@/components/NavBar.vue";
+import Navbar from "@/components/NavBar.vue";
 import QrcodeVue from 'qrcode.vue';
 
 export default {
   name: "UserProfilePage",
   components: {
     QrcodeVue,
+    Navbar
   },
   props: {
     userid: {
@@ -67,11 +83,14 @@ export default {
       isFollowing: false,
       defaultProfileImage: "https://via.placeholder.com/150?text=User",
       followsCurrentUser: false,
-      loading: true
+      loading: true,
+      userPosts: [],
+      postCount: 0
     };
   },
   created() {
     this.fetchUserData();
+    this.fetchUserPosts();
     if (!this.isOwnProfile) {
       this.checkRelationshipStatus();
     }
@@ -86,6 +105,7 @@ export default {
         const snapshot = await get(userRef);
         if (snapshot.exists()) {
           this.userData = snapshot.val();
+          this.userData.uid = this.userid; // Ensure UID is set for QR code
         } else {
           console.log("No user data available");
           this.userData = { uid: this.userid };
@@ -94,6 +114,40 @@ export default {
         console.error("Error fetching user data:", error);
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchUserPosts() {
+      if (!this.userid) return;
+      
+      try {
+        // Create a query to find posts by this user
+        const postsRef = ref(db, 'posts');
+        const userPostsQuery = query(postsRef, orderByChild('authorId'), equalTo(this.userid));
+        
+        const snapshot = await get(userPostsQuery);
+        
+        if (snapshot.exists()) {
+          const posts = [];
+          snapshot.forEach((childSnapshot) => {
+            const post = childSnapshot.val();
+            post.id = childSnapshot.key;
+            posts.push(post);
+          });
+          
+          // Sort posts by timestamp (newest first)
+          this.userPosts = posts.sort((a, b) => {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+          });
+          
+          this.postCount = posts.length;
+        } else {
+          this.userPosts = [];
+          this.postCount = 0;
+        }
+      } catch (error) {
+        console.error("Error fetching user posts:", error);
+        this.userPosts = [];
+        this.postCount = 0;
       }
     },
     async checkRelationshipStatus() {
@@ -169,7 +223,8 @@ export default {
 <style scoped>
 .user-profile-page {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem 1rem;
   background-color: #f8f8f8;
   min-height: 100vh;
@@ -183,6 +238,7 @@ export default {
   max-width: 480px;
   padding: 1.5rem;
   position: relative;
+  margin-top: 1rem;
 }
 
 .profile-header {
@@ -294,5 +350,39 @@ export default {
   color: #a3d2ca;
   margin: 0.25rem 0 0 0;
   font-weight: 500;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 2rem 0 1rem;
+  text-align: center;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.post-thumbnail {
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-posts {
+  text-align: center;
+  color: #888;
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 1px solid #eee;
 }
 </style>
