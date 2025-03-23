@@ -56,11 +56,146 @@ Modo 2.0.0 is ***now live*** at [modo-live.netlify.app](https://modo-live.netlif
 
 ## Architecture
 
-... Refer to vince's documentation in the README.md and style this repo's README accordingly https://github.com/vincetyy/CS203-Kickoff
-
 ### Overview
 
 ```mermaid
+sequenceDiagram
+    %% Define participants with styling
+    actor User as User
+    participant VueApp as Vue.js Frontend
+    participant VueStore as Vuex Store
+    participant FireAuth as Firebase Auth
+    participant FireDB as Firebase Database
+    participant ImgBB as ImgBB API
+    participant QRService as QR Code Service
+
+    %% Add styling
+    rect rgb(240, 248, 255)
+    note over User,QRService: User Authentication Flow
+    
+    %% Authentication process
+    User->>+VueApp: Open Application
+    VueApp->>+VueStore: Check Authentication State
+    VueStore->>+FireAuth: Get Current User
+    FireAuth-->>-VueStore: Return User (null)
+    VueStore-->>-VueApp: Not Authenticated
+    VueApp-->>-User: Display Login Screen
+    
+    User->>+VueApp: Enter Credentials
+    VueApp->>+VueStore: Dispatch Login Action
+    VueStore->>+FireAuth: signInWithEmailAndPassword()
+    FireAuth-->>-VueStore: Authentication Result
+    VueStore->>FireDB: Subscribe to User Data
+    VueStore-->>-VueApp: Update Auth State
+    VueApp-->>-User: Redirect to Feed
+    end
+
+    %% Post creation with image
+    rect rgb(255, 240, 245)
+    note over User,QRService: Post Creation Flow with Image Upload
+    
+    User->>+VueApp: Create New Post with Image
+    VueApp->>+VueApp: Preview Image
+    VueApp-->>-User: Show Image Preview
+    
+    User->>+VueApp: Confirm Post Creation
+    VueApp->>+ImgBB: Upload Image File
+    ImgBB-->>-VueApp: Return Image URL
+    
+    VueApp->>+VueStore: Dispatch Create Post Action
+    VueStore->>+FireDB: Add Post Document
+    FireDB-->>-VueStore: Post Creation Success
+    VueStore-->>-VueApp: Update UI
+    VueApp-->>-User: Show Success Message
+    end
+    
+    %% Friend request flow
+    rect rgb(240, 255, 240)
+    note over User,QRService: Friend Request Flow
+    
+    User->>+VueApp: Send Friend Request to User2
+    VueApp->>+VueStore: Dispatch Friend Request Action
+    VueStore->>+FireDB: Create Friend Request Document
+    FireDB-->>-VueStore: Request Created
+    VueStore-->>-VueApp: Update UI
+    VueApp-->>-User: Show Request Sent Message
+    
+    %% Friend request response
+    note over User,QRService: User2 checks requests and responds
+    User->>+VueApp: Check Friend Requests
+    VueApp->>+VueStore: Get Friend Requests
+    VueStore->>+FireDB: Query Friend Requests
+    FireDB-->>-VueStore: Return Pending Requests
+    VueStore-->>-VueApp: Update UI
+    VueApp-->>-User: Show Friend Request List
+    
+    User->>+VueApp: Accept Friend Request
+    VueApp->>+VueStore: Dispatch Accept Request Action
+    VueStore->>+FireDB: Update Friend Status
+    FireDB-->>-VueStore: Status Updated
+    VueStore-->>-VueApp: Update Friends List
+    VueApp-->>-User: Show Friend Added Message
+    end
+    
+    %% QR Code User Discovery
+    rect rgb(230, 230, 250)
+    note over User,QRService: QR Code User Discovery Flow
+    
+    %% Generate QR Code for current user
+    User->>+VueApp: Request Personal QR Code
+    VueApp->>+VueStore: Get User Profile Data
+    VueStore->>+FireDB: Fetch User Profile
+    FireDB-->>-VueStore: Return User Data
+    VueStore-->>-VueApp: User Profile Data
+    VueApp->>+QRService: Generate QR Code with User ID
+    QRService-->>-VueApp: Return QR Code Image
+    VueApp-->>-User: Display Personal QR Code
+    
+    %% Scan another user's QR code
+    User->>+VueApp: Scan QR Code
+    VueApp->>+VueApp: Access Device Camera
+    VueApp->>+QRService: Process QR Code Image
+    QRService-->>-VueApp: Extract User ID
+    VueApp->>+VueStore: Fetch User Profile by ID
+    VueStore->>+FireDB: Query User by ID
+    FireDB-->>-VueStore: Return User Profile
+    VueStore-->>-VueApp: User Profile Data
+    VueApp-->>-User: Display User Profile
+    
+    %% Add user from QR code
+    User->>+VueApp: Send Friend Request to Scanned User
+    VueApp->>+VueStore: Dispatch Friend Request Action
+    VueStore->>+FireDB: Create Friend Request Document
+    FireDB-->>-VueStore: Request Created
+    VueStore-->>-VueApp: Update UI
+    VueApp-->>-User: Show Request Sent Message
+    end
+    
+    %% User Profile QR Code Sharing
+    rect rgb(255, 248, 220)
+    note over User,QRService: QR Code Sharing Flow
+    
+    User->>+VueApp: Share Profile QR Code
+    VueApp->>+ImgBB: Upload QR Code Image
+    ImgBB-->>-VueApp: Return QR Code URL
+    VueApp->>+VueStore: Create Shareable Link
+    VueStore->>+FireDB: Store Shareable Link
+    FireDB-->>-VueStore: Link Created
+    VueStore-->>-VueApp: Return Shareable Link
+    VueApp-->>-User: Display Sharing Options
+    
+    User->>+VueApp: Share Link via Platform
+    VueApp->>+VueApp: Open Native Sharing Dialog
+    VueApp-->>-User: Confirm Link Shared
+    
+    note over User,QRService: Another User Opens Shared Link
+    User->>+VueApp: Open Shared QR Code Link
+    VueApp->>+VueStore: Resolve Link to User ID
+    VueStore->>+FireDB: Query User by ID
+    FireDB-->>-VueStore: Return User Profile
+    VueStore-->>-VueApp: User Profile Data
+    VueApp-->>-User: Display User Profile with Connect Option
+    end
 ```
 
 ### DB
@@ -1178,11 +1313,13 @@ graph TD
 
 ## License
 
-... Refer to license Vince and Zeming put on their projects and model those
+Distributed under the Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND) license. See LICENSE for more information.
 
-## Made by 
+## Attribution
 
-... Probably need to edit this more.
+### Creation
+
+Modo was written, developed and deployed entirely by [Gabriel Ong](https://gabrielongzm.com/).
 
 <table>
 	<tbody>
@@ -1198,9 +1335,9 @@ graph TD
 	</tbody>
 </table>
 
-## Credits
+### Testing
 
-My thanks especially to the beta-testers who helped stress test Modo. 
+My thanks also go out to these beta-testers who helped stress test Modo. 
 
 <table>
 	<tbody>
@@ -1232,7 +1369,7 @@ My thanks especially to the beta-testers who helped stress test Modo.
 
 ## Support
 
-...
+Report any issues [here](https://github.com/gongahkia/modo-app/issues).
 
 ## Reference
 
