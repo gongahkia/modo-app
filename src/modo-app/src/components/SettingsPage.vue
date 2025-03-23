@@ -54,23 +54,6 @@
       </ul>
     </section>
 
-    <!-- Blacklist Users -->
-    <section class="p-4">
-      <h2 class="text-xl font-bold">Blacklisted Users:</h2>
-      <p v-if="blacklistedUsers.length === 0">No users are currently blacklisted.</p>
-      <ul>
-        <li v-for="user in blacklistedUsers" :key="user.uid">
-          <span class="user-displayName">
-            {{ userNames[user.uid] || "Anonymous User" }}
-            <span class="user-id">
-              {{ user.uid || "Unknown ID" }}
-            </span>
-          </span> 
-          <button @click="removeFromBlacklist(user.uid)" class="btn-red">Unblacklist</button>
-        </li>
-      </ul>
-    </section>
-
     <!-- Update User Settings -->
     <section class="p-4">
       <h2 class="text-xl font-bold">Update Settings:</h2>
@@ -136,7 +119,6 @@ export default {
       uniqueCode: "",
       followedUsers: [],
       followers: [],
-      blacklistedUsers: [],
       displayName: "",
       profileImageFile: null,
       profileImagePreview: null,
@@ -177,18 +159,6 @@ export default {
       onValue(followersRef, (snapshot) => {
         const data = snapshot.val() || {};
         this.followers = Object.keys(data).map((key) => ({
-          uid: key,
-          ...data[key],
-        }));
-        this.fetchUserNames();
-      });
-    },
-    fetchBlacklistedUsers() {
-      const userUid = auth.currentUser.uid;
-      const blacklistRef = ref(db, `users/${userUid}/blacklist`);
-      onValue(blacklistRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        this.blacklistedUsers = Object.keys(data).map((key) => ({
           uid: key,
           ...data[key],
         }));
@@ -299,19 +269,6 @@ export default {
           this.showStatusMessage("Failed to remove user from followers.", false);
         });
     },
-    removeFromBlacklist(blacklistedUid) {
-      const userUid = auth.currentUser.uid;
-      const blacklistRef = ref(db, `users/${userUid}/blacklist/${blacklistedUid}`);
-      
-      remove(blacklistRef)
-        .then(() => {
-          this.fetchBlacklistedUsers(); // Refresh the list
-          this.showStatusMessage("User removed from blacklist successfully!", true);
-        })
-        .catch(() => {
-          this.showStatusMessage("Failed to remove user from blacklist.", false);
-        });
-    },
     async updateSettings() {
       if (!auth.currentUser) {
         this.showStatusMessage("You must be logged in to update settings.", false);
@@ -395,15 +352,11 @@ export default {
       for (const follower of this.followers) {
         await this.getUserName(follower.uid);
       }
-      for (const user of this.blacklistedUsers) {
-        await this.getUserName(user.uid);
-      }
     },
   },
   mounted() {
     if (auth.currentUser) {
       this.fetchUniqueCode();
-      this.fetchBlacklistedUsers();
       this.fetchFollowedUsers();
       this.fetchFollowers();
       this.fetchSettings();

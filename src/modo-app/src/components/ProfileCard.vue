@@ -25,13 +25,6 @@
           >
             {{ isFollowing ? 'Following' : 'Follow' }}
           </button>
-          <button 
-            class="action-btn blacklist-btn" 
-            :class="{ 'blacklisted': isBlacklisted }"
-            @click="toggleBlacklist"
-          >
-            {{ isBlacklisted ? 'Blacklisted' : 'Blacklist' }}
-          </button>
         </div>
         
         <div class="user-stats">
@@ -73,7 +66,6 @@
       return {
         userData: {},
         isFollowing: false,
-        isBlacklisted: false,
         defaultProfileImage: "https://via.placeholder.com/150?text=User",
       };
     },
@@ -129,16 +121,6 @@
         } catch (error) {
           console.error("Error checking following status:", error);
         }
-        
-        // Check if current user has blacklisted the profile user
-        const blacklistRef = ref(db, `users/${auth.currentUser.uid}/blacklist/${this.userId}`);
-        console.log(blacklistRef);
-        try {
-          const snapshot = await get(blacklistRef);
-          this.isBlacklisted = snapshot.exists();
-        } catch (error) {
-          console.error("Error checking blacklist status:", error);
-        }
       },
       async toggleFollow() {
         if (!auth.currentUser || auth.currentUser.uid === this.userId) return;
@@ -161,30 +143,6 @@
           this.isFollowing = !this.isFollowing;
         } catch (error) {
           console.error("Error updating follow status:", error);
-        }
-      },
-      async toggleBlacklist() {
-        if (!auth.currentUser || auth.currentUser.uid === this.userId) return;
-        
-        const currentUserUid = auth.currentUser.uid;
-        const blacklistRef = ref(db, `users/${currentUserUid}/blacklist/${this.userId}`);
-        console.log(blacklistRef);
-        
-        try {
-          if (this.isBlacklisted) {
-            // Remove from blacklist
-            await update(ref(db), {
-              [`users/${currentUserUid}/blacklist/${this.userId}`]: null
-            });
-          } else {
-            // Add to blacklist
-            await update(ref(db), {
-              [`users/${currentUserUid}/blacklist/${this.userId}`]: true
-            });
-          }
-          this.isBlacklisted = !this.isBlacklisted;
-        } catch (error) {
-          console.error("Error updating blacklist status:", error);
         }
       },
       formatJoinDate(timestamp) {
@@ -343,22 +301,7 @@
     background-color: #e0e0e0;
     color: #333;
   }
-  
-  .blacklist-btn {
-    background-color: #f0f0f0;
-    color: #333;
-  }
-  
-  .blacklist-btn:hover {
-    background-color: #ffcccb;
-    color: #d32f2f;
-  }
-  
-  .blacklist-btn.blacklisted {
-    background-color: #ffcccb;
-    color: #d32f2f;
-  }
-  
+
   .user-stats {
     display: flex;
     justify-content: space-around;
