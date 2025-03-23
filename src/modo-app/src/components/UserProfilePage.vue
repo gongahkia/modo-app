@@ -230,7 +230,7 @@ export default {
       console.log(`User found with ID: ${this.userid}`);
       this.isAuthenticated = true;
     } else {
-      this.$router.push('/');
+      console.log("User not authenticated. Requesting login or registration.");
     }
   },
 };
