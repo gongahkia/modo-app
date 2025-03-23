@@ -222,7 +222,7 @@ export default {
     },
     fetchUniqueUrl() {
       const userUid = this.userid;
-      return `https://modo-live.netlify.app/dashboard/user/${userUid}`;
+      this.uniqueUrl = `https://modo-live.netlify.app/dashboard/user/${userUid}`;
     },
   },
   computed: {

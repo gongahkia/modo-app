@@ -144,7 +144,7 @@ export default {
     },
     fetchUniqueUrl() {
       const userUid = auth.currentUser.uid;
-      return `https://modo-live.netlify.app/dashboard/user/${userUid}`;
+      this.uniqueUrl = `https://modo-live.netlify.app/dashboard/user/${userUid}`;
     },
     fetchFollowedUsers() {
       const userUid = auth.currentUser.uid;
