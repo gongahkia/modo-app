@@ -9,6 +9,7 @@
             <h2 class="username">{{ userData.name || 'Anonymous' }}</h2>
             <p class="user-id">ID: {{ userData.uniqueCode || 'Unknown ID' }}</p>
             <p class="join-date">Joined Modo on {{ formatJoinDate(userData.createdAt) }}</p>
+            <p v-if="followsCurrentUser" class="follows-you">Follows you</p>
           </div>
           <button class="close-button" @click="closeProfile">×</button>
         </div>
@@ -67,6 +68,7 @@
         userData: {},
         isFollowing: false,
         defaultProfileImage: "https://via.placeholder.com/150?text=User",
+        followsCurrentUser: true,
       };
     },
     watch: {
@@ -112,15 +114,16 @@
       },
       async checkRelationshipStatus() {
         if (!auth.currentUser || auth.currentUser.uid === this.userId) return;
-        
-        // Check if current user is following the profile user
-        const followingRef = ref(db, `users/${auth.currentUser.uid}/following/${this.userId}`);
-        try {
-          const snapshot = await get(followingRef);
-          this.isFollowing = snapshot.exists();
-        } catch (error) {
-          console.error("Error checking following status:", error);
-        }
+        await Promise.all([
+          this.checkIfFollowsCurrentUser(),
+          const followingRef = ref(db, `users/${auth.currentUser.uid}/following/${this.userId}`);
+          try {
+            const snapshot = await get(followingRef);
+            this.isFollowing = snapshot.exists();
+          } catch (error) {
+            console.error("Error checking following status:", error);
+          }
+        ]);
       },
       async toggleFollow() {
         if (!auth.currentUser || auth.currentUser.uid === this.userId) return;
@@ -156,6 +159,16 @@
           month: 'long',
           day: 'numeric'
         });
+      },
+      async checkIfFollowsCurrentUser() {
+        if (!auth.currentUser || auth.currentUser.uid === this.userId) return;
+        const followerRef = ref(db, `users/${auth.currentUser.uid}/followers/${this.userId}`);
+        try {
+          const snapshot = await get(followerRef);
+          this.followsCurrentUser = snapshot.exists();
+        } catch (error) {
+          console.error("Error checking if user follows current user:", error);
+        }
       },
     },
     computed: {
@@ -326,5 +339,12 @@
     font-size: 0.85rem;
     color: #666;
     margin-top: 0.25rem;
+  }
+
+  .follows-you {
+    font-size: 0.85rem;
+    color: #a3d2ca;
+    margin: 0.25rem 0 0 0;
+    font-weight: 500;
   }
   </style>
