@@ -2,8 +2,6 @@
   <div class="min-h-screen flex items-center justify-center bg-pastel">
     <div class="auth-container">
       <img src="@/assets/modo.png" alt="Modo Logo" class="logo" />
-      <h1 class="text-2xl font-bold mb-4">Welcome to Modo</h1>
-      
       <!-- Error/Status Message -->
       <div v-if="statusMessage" class="status-message" :class="{ success: isSuccess, error: !isSuccess }">
         {{ statusMessage }}
