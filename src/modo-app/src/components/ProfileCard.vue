@@ -19,10 +19,6 @@
           <button class="close-button" @click="closeProfile">×</button>
         </div>
         
-        <div class="qr-code-container">
-          <qrcode-vue :value="userData.uid" :size="150" level="H" alt="User QR Code" />
-        </div>
-        
         <div class="action-buttons" v-if="!isOwnProfile">
           <button 
             class="action-btn follow-btn" 
@@ -50,13 +46,9 @@
   <script>
   import { ref, update, get } from "firebase/database";
   import { auth, db } from "@/firebase";
-  import QrcodeVue from 'qrcode.vue';
   
   export default {
     name: "ProfileCard",
-    components: {
-      QrcodeVue,
-    },
     props: {
       userId: {
         type: String,
