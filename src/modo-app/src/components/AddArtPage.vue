@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-pastel">
     <NavBar />
     <main class="container mx-auto p-4">
-      <h1 class="text-2xl font-bold mb-4">Add New Artwork</h1>
+      <h1 class="text-2xl font-bold mb-4">Create a Post</h1>
       
       <div class="mb-4">
         <label class="block mb-2">Upload Image</label>
@@ -18,7 +18,7 @@
       </div>
       
       <button @click="uploadArt" class="btn" :disabled="isUploading">
-        {{ isUploading ? 'Uploading...' : 'Share Artwork' }}
+        {{ isUploading ? 'Uploading...' : 'Share' }}
       </button>
     </main>
   </div>
@@ -62,7 +62,7 @@ export default {
       
       // Check user authentication
       if (!auth.currentUser) {
-        alert("You must be logged in to upload artwork");
+        alert("You must be logged in to upload a post");
         this.$router.push('/login');
         return;
       }
@@ -137,8 +137,8 @@ export default {
           throw new Error("Failed to upload image to ImgBB");
         }
       } catch (error) {
-        console.error("Error uploading artwork:", error);
-        alert("Failed to upload artwork. Please try again.");
+        console.error("Error uploading post:", error);
+        alert("Failed to upload post. Please try again.");
       } finally {
         this.isUploading = false;
       }
