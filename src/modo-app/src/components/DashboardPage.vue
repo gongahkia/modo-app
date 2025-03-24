@@ -26,9 +26,9 @@
       </div>
     </main>
     
-    <!-- Add Art -->
+    <!-- Share something -->
     <footer class="fixed bottom-0 w-full bg-white shadow p-4 flex justify-center">
-      <button @click="$router.push('/add-art')" class="btn">Add Art</button>
+      <button @click="$router.push('/add-art')" class="btn">Share something</button>
     </footer>
   </div>
 </template>
